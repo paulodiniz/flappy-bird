@@ -1,52 +1,60 @@
 var _user$project$Main$blueSky = A3(_elm_lang$core$Color$rgb, 174, 238, 238);
+var _user$project$Main$twoSeconds = _elm_lang$core$Time$second * 2;
 var _user$project$Main$jump = function (bird) {
 	return _elm_lang$core$Native_Utils.update(
 		bird,
 		{vy: 8});
 };
-var _user$project$Main$physics = function (bird) {
-	return _elm_lang$core$Native_Utils.update(
+var _user$project$Main$gravityValue = 0.45;
+var _user$project$Main$physics = function (game) {
+	var bird = game.bird;
+	var newBird = _elm_lang$core$Native_Utils.update(
 		bird,
 		{y: bird.y + bird.vy});
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{bird: newBird});
 };
-var _user$project$Main$gravityValue = 0.45;
 var _user$project$Main$_p0 = {ctor: '_Tuple2', _0: 600, _1: 400};
 var _user$project$Main$gameWidth = _user$project$Main$_p0._0;
 var _user$project$Main$gameHeight = _user$project$Main$_p0._1;
-var _user$project$Main$gravity = function (bird) {
-	return _elm_lang$core$Native_Utils.update(
+var _user$project$Main$gravity = function (game) {
+	var bird = game.bird;
+	var newBird = _elm_lang$core$Native_Utils.update(
 		bird,
 		{
 			vy: (_elm_lang$core$Native_Utils.cmp(bird.y, 0 - (_user$project$Main$gameHeight / 2)) > 0) ? (bird.vy - _user$project$Main$gravityValue) : 0
 		});
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{bird: newBird});
 };
-var _user$project$Main$updateFlappy = function (bird) {
+var _user$project$Main$updateFlappy = function (game) {
 	return _user$project$Main$physics(
-		_user$project$Main$gravity(bird));
+		_user$project$Main$gravity(game));
 };
 var _user$project$Main$update = F2(
 	function (msg, game) {
 		var _p1 = msg;
-		if (_p1.ctor === 'TimeUpdate') {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					game,
-					{
-						bird: _user$project$Main$updateFlappy(game.bird)
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					game,
-					{
-						bird: _user$project$Main$jump(game.bird)
-					}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
+		switch (_p1.ctor) {
+			case 'TimeUpdate':
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Main$updateFlappy(game),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'KeyDown':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						game,
+						{
+							bird: _user$project$Main$jump(game.bird)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
 var _user$project$Main$view = function (game) {
@@ -82,7 +90,7 @@ var _user$project$Main$view = function (game) {
 					}
 				})));
 };
-var _user$project$Main$initialBird = {x: 30, y: 100, vx: 0, vy: -0.8};
+var _user$project$Main$initialBird = {x: 30, y: 100, vx: 0, vy: 0};
 var _user$project$Main$initialGame = {
 	windowDimensions: {ctor: '_Tuple2', _0: _user$project$Main$gameWidth, _1: _user$project$Main$gameHeight},
 	bird: _user$project$Main$initialBird
@@ -96,6 +104,9 @@ var _user$project$Main$Game = F2(
 	function (a, b) {
 		return {windowDimensions: a, bird: b};
 	});
+var _user$project$Main$GeneratePipe = function (a) {
+	return {ctor: 'GeneratePipe', _0: a};
+};
 var _user$project$Main$KeyDown = function (a) {
 	return {ctor: 'KeyDown', _0: a};
 };
@@ -110,7 +121,11 @@ var _user$project$Main$subscriptions = function (model) {
 			_1: {
 				ctor: '::',
 				_0: _elm_lang$keyboard$Keyboard$downs(_user$project$Main$KeyDown),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$core$Time$every, _user$project$Main$twoSeconds, _user$project$Main$GeneratePipe),
+					_1: {ctor: '[]'}
+				}
 			}
 		});
 };

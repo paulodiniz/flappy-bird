@@ -6,7 +6,7 @@ import Color exposing (..)
 import Element exposing (..)
 import Html exposing (Html, text)
 import Keyboard exposing (KeyCode)
-import Time exposing (Time)
+import Time exposing (..)
 
 
 type alias Space =
@@ -21,6 +21,8 @@ main =
         , update = update
         , subscriptions = subscriptions
         }
+
+
 
 -- MODEL
 
@@ -38,7 +40,7 @@ initialBird =
     { x = 30
     , y = 100
     , vx = 0
-    , vy = -0.8
+    , vy = 0
     }
 
 
@@ -71,51 +73,72 @@ init =
 type Msg
     = TimeUpdate Time
     | KeyDown KeyCode
+    | GeneratePipe Time
 
 
 update : Msg -> Game -> ( Game, Cmd Msg )
 update msg game =
     case msg of
         TimeUpdate dt ->
-            ( { game | bird = updateFlappy game.bird }, Cmd.none )
+            ( updateFlappy game, Cmd.none )
 
         KeyDown keyCode ->
             ( { game | bird = jump game.bird }, Cmd.none )
 
+        GeneratePipe _ ->
+            ( game, Cmd.none )
 
-updateFlappy : Bird -> Bird
-updateFlappy bird =
-    bird
+
+updateFlappy : Game -> Game
+updateFlappy game =
+    game
         |> gravity
         |> physics
 
 
-gravity : Bird -> Bird
-gravity bird =
-    { bird
-        | vy =
-            if bird.y > -(gameHeight / 2) then
-                bird.vy - gravityValue
-            else
-                0
-    }
+gravity : Game -> Game
+gravity game =
+    let
+        bird =
+            game.bird
+
+        newBird =
+            { bird
+                | vy =
+                    if bird.y > -(gameHeight / 2) then
+                        bird.vy - gravityValue
+                    else
+                        0
+            }
+    in
+        { game | bird = newBird }
+
+
+physics : Game -> Game
+physics game =
+    let
+        bird =
+            game.bird
+
+        newBird =
+            { bird | y = bird.y + bird.vy }
+    in
+        { game | bird = newBird }
+
 
 gravityValue : Float
 gravityValue =
     0.45
 
-physics : Bird -> Bird
-physics bird =
-    { bird
-        | y = bird.y + bird.vy
-    }
-
 
 jump : Bird -> Bird
 jump bird =
-    { bird
-        | vy = 8
-    }
+    { bird | vy = 8 }
+
+
+twoSeconds : Time
+twoSeconds =
+    Time.second * 2
 
 
 
@@ -127,6 +150,7 @@ subscriptions model =
     Sub.batch
         [ AnimationFrame.diffs TimeUpdate
         , Keyboard.downs KeyDown
+        , Time.every twoSeconds GeneratePipe
         ]
 
 
