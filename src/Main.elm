@@ -7,6 +7,7 @@ import Element exposing (..)
 import Html exposing (Html, text)
 import Keyboard exposing (KeyCode)
 import Time exposing (..)
+import Array
 
 
 type alias Space =
@@ -27,11 +28,26 @@ main =
 -- MODEL
 
 
+type alias Game =
+    { bird : Bird
+    , pipes : Array.Array Pipe
+    , windowDimensions : ( Int, Int )
+    }
+
+
 type alias Bird =
     { x : Float
     , y : Float
     , vx : Float
     , vy : Float
+    }
+
+
+type alias Pipe =
+    { x : Float
+    , y : Float
+    , height : Float
+    , passed : Bool
     }
 
 
@@ -48,16 +64,11 @@ initialBird =
     ( 600, 400 )
 
 
-type alias Game =
-    { windowDimensions : ( Int, Int )
-    , bird : Bird
-    }
-
-
 initialGame : Game
 initialGame =
-    { windowDimensions = ( gameWidth, gameHeight )
-    , bird = initialBird
+    { bird = initialBird
+    , pipes = Array.empty
+    , windowDimensions = ( gameWidth, gameHeight )
     }
 
 
@@ -86,7 +97,20 @@ update msg game =
             ( { game | bird = jump game.bird }, Cmd.none )
 
         GeneratePipe _ ->
-            ( game, Cmd.none )
+            ( generateNewPipe game, Cmd.none )
+
+
+generateNewPipe : Game -> Game
+generateNewPipe game =
+    let
+        newPipe =
+          { x = 100
+          , y = 100
+          , height = 30
+          , passed = False
+          }
+    in
+      { game | pipes = Array.append game.pipes <| Array.fromList [newPipe] }
 
 
 updateFlappy : Game -> Game
@@ -94,6 +118,7 @@ updateFlappy game =
     game
         |> gravity
         |> physics
+        |> updatePipes
 
 
 gravity : Game -> Game
@@ -141,6 +166,16 @@ twoSeconds =
     Time.second * 2
 
 
+updatePipes : Game -> Game
+updatePipes game =
+    let
+        updatedPipes = Array.map updatePipe game.pipes
+    in
+        { game | pipes = updatedPipes }
+
+updatePipe : Pipe -> Pipe
+updatePipe pipe =
+    { pipe | x = pipe.x - 10 }
 
 -- SUBSCRIPTIONS
 
@@ -152,6 +187,20 @@ subscriptions model =
         , Keyboard.downs KeyDown
         , Time.every twoSeconds GeneratePipe
         ]
+
+
+pipeToForm : Pipe -> Form
+pipeToForm pipe =
+    let
+        pipeWidth =
+            200
+
+        pipeHeight =
+            200
+    in
+        image pipeWidth pipeHeight "pipe.png"
+            |> toForm
+            |> move ( pipe.x, pipe.y )
 
 
 view : Game -> Html msg
@@ -168,16 +217,27 @@ view game =
 
         groundY =
             10
+
+        pipesForm =
+            Array.map pipeToForm game.pipes |> Array.toList
+
+        backgroundForms =
+            [ rect gameWidth gameHeight |> filled blueSky ]
+
+        birdForm =
+            [ birdImage |> toForm |> move ( bird.x, bird.y + groundY ) ]
+
+        pipeForms =
+            Array.map pipeToForm game.pipes |> Array.toList
+
+        formList =
+            List.append backgroundForms <|
+                List.append birdForm <|
+                    pipeForms
     in
         toHtml <|
             container w h middle <|
-                collage gameWidth
-                    gameHeight
-                    [ rect gameWidth gameHeight |> filled blueSky
-                    , birdImage
-                        |> toForm
-                        |> move ( bird.x, bird.y + groundY )
-                    ]
+                collage gameWidth gameHeight formList
 
 
 blueSky : Color
