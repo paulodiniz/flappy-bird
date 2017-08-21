@@ -229,10 +229,10 @@ pipeToForms pipe =
         pipeHeight =
             100
     in
-        [ image pipeWidth pipeHeight "pipe_down.png"
+        [ image pipeWidth pipeHeight "./src/pipe_down.png"
             |> toForm
             |> move ( pipe.x, pipe.height - gameHeight / 2 )
-        , image pipeWidth pipeHeight "pipe_up.png"
+        , image pipeWidth pipeHeight "./src/pipe_up.png"
             |> toForm
             |> move ( pipe.x, gameHeight / 2 - pipe.height )
         ]
@@ -248,7 +248,7 @@ view game =
             game.bird
 
         birdImage =
-            image 35 35 "flappy.png"
+            image 35 35 "./src/flappy.png"
 
         groundY =
             10
