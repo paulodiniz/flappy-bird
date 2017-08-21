@@ -106,7 +106,7 @@ generateNewPipe game =
         newPipe =
           { x = 300
           , y = 100
-          , height = 30
+          , height = 3
           , passed = False
           }
     in
@@ -193,14 +193,14 @@ pipeToForm : Pipe -> Form
 pipeToForm pipe =
     let
         pipeWidth =
-            200
+            75
 
         pipeHeight =
-            200
+            100
     in
         image pipeWidth pipeHeight "pipe.png"
             |> toForm
-            |> move ( pipe.x, pipe.y )
+            |> move ( pipe.x, pipe.y - 250)
 
 
 view : Game -> Html msg

@@ -1,10 +1,10 @@
 var _user$project$Main$blueSky = A3(_elm_lang$core$Color$rgb, 174, 238, 238);
 var _user$project$Main$pipeToForm = function (pipe) {
-	var pipeHeight = 200;
-	var pipeWidth = 200;
+	var pipeHeight = 100;
+	var pipeWidth = 75;
 	return A2(
 		_evancz$elm_graphics$Collage$move,
-		{ctor: '_Tuple2', _0: pipe.x, _1: pipe.y},
+		{ctor: '_Tuple2', _0: pipe.x, _1: pipe.y - 250},
 		_evancz$elm_graphics$Collage$toForm(
 			A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, 'pipe.png')));
 };
@@ -36,7 +36,7 @@ var _user$project$Main$physics = function (game) {
 		{bird: newBird});
 };
 var _user$project$Main$generateNewPipe = function (game) {
-	var newPipe = {x: 300, y: 100, height: 30, passed: false};
+	var newPipe = {x: 300, y: 100, height: 3, passed: false};
 	return _elm_lang$core$Native_Utils.update(
 		game,
 		{
