@@ -104,7 +104,7 @@ generateNewPipe : Game -> Game
 generateNewPipe game =
     let
         newPipe =
-          { x = 100
+          { x = 300
           , y = 100
           , height = 30
           , passed = False

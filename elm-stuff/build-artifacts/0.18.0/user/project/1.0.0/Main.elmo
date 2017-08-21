@@ -36,7 +36,7 @@ var _user$project$Main$physics = function (game) {
 		{bird: newBird});
 };
 var _user$project$Main$generateNewPipe = function (game) {
-	var newPipe = {x: 100, y: 100, height: 30, passed: false};
+	var newPipe = {x: 300, y: 100, height: 30, passed: false};
 	return _elm_lang$core$Native_Utils.update(
 		game,
 		{
