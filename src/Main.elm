@@ -103,13 +103,13 @@ generateNewPipe : Game -> Game
 generateNewPipe game =
     let
         newPipe =
-          { x = 300
-          , y = 100
-          , height = 3
-          , passed = False
-          }
+            { x = 300
+            , y = 100
+            , height = 3
+            , passed = False
+            }
     in
-      { game | pipes = List.append game.pipes [newPipe] }
+        { game | pipes = List.append game.pipes [ newPipe ] }
 
 
 updateFlappy : Game -> Game
@@ -168,13 +168,17 @@ twoSeconds =
 updatePipes : Game -> Game
 updatePipes game =
     let
-        updatedPipes = List.map updatePipe game.pipes
+        updatedPipes =
+            List.map updatePipe game.pipes
     in
         { game | pipes = updatedPipes }
+
 
 updatePipe : Pipe -> Pipe
 updatePipe pipe =
     { pipe | x = pipe.x - 10 }
+
+
 
 -- SUBSCRIPTIONS
 
@@ -188,8 +192,8 @@ subscriptions model =
         ]
 
 
-pipeToForm : Pipe -> Form
-pipeToForm pipe =
+pipeToForms : Pipe -> List Form
+pipeToForms pipe =
     let
         pipeWidth =
             75
@@ -197,9 +201,13 @@ pipeToForm pipe =
         pipeHeight =
             100
     in
-        image pipeWidth pipeHeight "pipe.png"
+        [ image pipeWidth pipeHeight "pipe_down.png"
             |> toForm
-            |> move ( pipe.x, pipe.y - 250)
+            |> move ( pipe.x, pipe.y - 250 )
+        , image pipeWidth pipeHeight "pipe_up.png"
+            |> toForm
+            |> move ( pipe.x, pipe.y )
+        ]
 
 
 view : Game -> Html msg
@@ -217,8 +225,8 @@ view game =
         groundY =
             10
 
-        pipesForm =
-            List.map pipeToForm game.pipes
+        pipesForms =
+            List.concatMap pipeToForms game.pipes
 
         backgroundForms =
             [ rect gameWidth gameHeight |> filled blueSky ]
@@ -226,13 +234,10 @@ view game =
         birdForm =
             [ birdImage |> toForm |> move ( bird.x, bird.y + groundY ) ]
 
-        pipeForms =
-            List.map pipeToForm game.pipes
-
         formList =
             List.append backgroundForms <|
                 List.append birdForm <|
-                    pipeForms
+                    pipesForms
     in
         toHtml <|
             container w h middle <|

@@ -1,12 +1,24 @@
 var _user$project$Main$blueSky = A3(_elm_lang$core$Color$rgb, 174, 238, 238);
-var _user$project$Main$pipeToForm = function (pipe) {
+var _user$project$Main$pipeToForms = function (pipe) {
 	var pipeHeight = 100;
 	var pipeWidth = 75;
-	return A2(
-		_evancz$elm_graphics$Collage$move,
-		{ctor: '_Tuple2', _0: pipe.x, _1: pipe.y - 250},
-		_evancz$elm_graphics$Collage$toForm(
-			A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, 'pipe.png')));
+	return {
+		ctor: '::',
+		_0: A2(
+			_evancz$elm_graphics$Collage$move,
+			{ctor: '_Tuple2', _0: pipe.x, _1: pipe.y - 250},
+			_evancz$elm_graphics$Collage$toForm(
+				A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, 'pipe_down.png'))),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_evancz$elm_graphics$Collage$move,
+				{ctor: '_Tuple2', _0: pipe.x, _1: pipe.y},
+				_evancz$elm_graphics$Collage$toForm(
+					A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, 'pipe_up.png'))),
+			_1: {ctor: '[]'}
+		}
+	};
 };
 var _user$project$Main$updatePipe = function (pipe) {
 	return _elm_lang$core$Native_Utils.update(
@@ -98,7 +110,6 @@ var _user$project$Main$update = F2(
 		}
 	});
 var _user$project$Main$view = function (game) {
-	var pipeForms = A2(_elm_lang$core$List$map, _user$project$Main$pipeToForm, game.pipes);
 	var backgroundForms = {
 		ctor: '::',
 		_0: A2(
@@ -107,7 +118,7 @@ var _user$project$Main$view = function (game) {
 			A2(_evancz$elm_graphics$Collage$rect, _user$project$Main$gameWidth, _user$project$Main$gameHeight)),
 		_1: {ctor: '[]'}
 	};
-	var pipesForm = A2(_elm_lang$core$List$map, _user$project$Main$pipeToForm, game.pipes);
+	var pipesForms = A2(_elm_lang$core$List$concatMap, _user$project$Main$pipeToForms, game.pipes);
 	var groundY = 10;
 	var birdImage = A3(_evancz$elm_graphics$Element$image, 35, 35, 'flappy.png');
 	var bird = game.bird;
@@ -122,7 +133,7 @@ var _user$project$Main$view = function (game) {
 	var formList = A2(
 		_elm_lang$core$List$append,
 		backgroundForms,
-		A2(_elm_lang$core$List$append, birdForm, pipeForms));
+		A2(_elm_lang$core$List$append, birdForm, pipesForms));
 	var _p2 = game.windowDimensions;
 	var w = _p2._0;
 	var h = _p2._1;
