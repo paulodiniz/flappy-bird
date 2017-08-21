@@ -1,35 +1,15 @@
 var _user$project$Main$blueSky = A3(_elm_lang$core$Color$rgb, 174, 238, 238);
-var _user$project$Main$pipeToForms = function (pipe) {
-	var pipeHeight = 100;
-	var pipeWidth = 75;
-	return {
-		ctor: '::',
-		_0: A2(
-			_evancz$elm_graphics$Collage$move,
-			{ctor: '_Tuple2', _0: pipe.x, _1: pipe.y - 250},
-			_evancz$elm_graphics$Collage$toForm(
-				A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, 'pipe_down.png'))),
-		_1: {
-			ctor: '::',
-			_0: A2(
-				_evancz$elm_graphics$Collage$move,
-				{ctor: '_Tuple2', _0: pipe.x, _1: pipe.y},
-				_evancz$elm_graphics$Collage$toForm(
-					A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, 'pipe_up.png'))),
-			_1: {ctor: '[]'}
-		}
-	};
-};
 var _user$project$Main$updatePipe = function (pipe) {
 	return _elm_lang$core$Native_Utils.update(
 		pipe,
 		{x: pipe.x - 10});
 };
 var _user$project$Main$updatePipes = function (game) {
-	var updatedPipes = A2(_elm_lang$core$List$map, _user$project$Main$updatePipe, game.pipes);
 	return _elm_lang$core$Native_Utils.update(
 		game,
-		{pipes: updatedPipes});
+		{
+			pipes: A2(_elm_lang$core$List$map, _user$project$Main$updatePipe, game.pipes)
+		});
 };
 var _user$project$Main$twoSeconds = _elm_lang$core$Time$second * 2;
 var _user$project$Main$jump = function (bird) {
@@ -48,7 +28,7 @@ var _user$project$Main$physics = function (game) {
 		{bird: newBird});
 };
 var _user$project$Main$generateNewPipe = function (game) {
-	var newPipe = {x: 300, y: 100, height: 3, passed: false};
+	var newPipe = {height: 40, passageSize: 200, passed: false, x: 300};
 	return _elm_lang$core$Native_Utils.update(
 		game,
 		{
@@ -81,34 +61,27 @@ var _user$project$Main$updateFlappy = function (game) {
 		_user$project$Main$physics(
 			_user$project$Main$gravity(game)));
 };
-var _user$project$Main$update = F2(
-	function (msg, game) {
-		var _p1 = msg;
-		switch (_p1.ctor) {
-			case 'TimeUpdate':
-				return {
-					ctor: '_Tuple2',
-					_0: _user$project$Main$updateFlappy(game),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'KeyDown':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						game,
-						{
-							bird: _user$project$Main$jump(game.bird)
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			default:
-				return {
-					ctor: '_Tuple2',
-					_0: _user$project$Main$generateNewPipe(game),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+var _user$project$Main$pipeToForms = function (pipe) {
+	var pipeHeight = 100;
+	var pipeWidth = 75;
+	return {
+		ctor: '::',
+		_0: A2(
+			_evancz$elm_graphics$Collage$move,
+			{ctor: '_Tuple2', _0: pipe.x, _1: pipe.height - (_user$project$Main$gameHeight / 2)},
+			_evancz$elm_graphics$Collage$toForm(
+				A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, 'pipe_down.png'))),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_evancz$elm_graphics$Collage$move,
+				{ctor: '_Tuple2', _0: pipe.x, _1: (_user$project$Main$gameHeight / 2) - pipe.height},
+				_evancz$elm_graphics$Collage$toForm(
+					A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, 'pipe_up.png'))),
+			_1: {ctor: '[]'}
 		}
-	});
+	};
+};
 var _user$project$Main$view = function (game) {
 	var backgroundForms = {
 		ctor: '::',
@@ -134,9 +107,9 @@ var _user$project$Main$view = function (game) {
 		_elm_lang$core$List$append,
 		backgroundForms,
 		A2(_elm_lang$core$List$append, birdForm, pipesForms));
-	var _p2 = game.windowDimensions;
-	var w = _p2._0;
-	var h = _p2._1;
+	var _p1 = game.windowDimensions;
+	var w = _p1._0;
+	var h = _p1._1;
 	return _evancz$elm_graphics$Element$toHtml(
 		A4(
 			_evancz$elm_graphics$Element$container,
@@ -145,16 +118,10 @@ var _user$project$Main$view = function (game) {
 			_evancz$elm_graphics$Element$middle,
 			A3(_evancz$elm_graphics$Collage$collage, _user$project$Main$gameWidth, _user$project$Main$gameHeight, formList)));
 };
-var _user$project$Main$initialBird = {x: 30, y: 100, vx: 0, vy: 0};
-var _user$project$Main$initialGame = {
-	bird: _user$project$Main$initialBird,
-	pipes: {ctor: '[]'},
-	windowDimensions: {ctor: '_Tuple2', _0: _user$project$Main$gameWidth, _1: _user$project$Main$gameHeight}
-};
-var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initialGame, _1: _elm_lang$core$Platform_Cmd$none};
-var _user$project$Main$Game = F3(
-	function (a, b, c) {
-		return {bird: a, pipes: b, windowDimensions: c};
+var _user$project$Main$initialBird = {x: -150, y: 20, vx: 0, vy: 0};
+var _user$project$Main$Game = F4(
+	function (a, b, c, d) {
+		return {bird: a, pipes: b, windowDimensions: c, state: d};
 	});
 var _user$project$Main$Bird = F4(
 	function (a, b, c, d) {
@@ -162,7 +129,64 @@ var _user$project$Main$Bird = F4(
 	});
 var _user$project$Main$Pipe = F4(
 	function (a, b, c, d) {
-		return {x: a, y: b, height: c, passed: d};
+		return {height: a, passageSize: b, passed: c, x: d};
+	});
+var _user$project$Main$GameOver = {ctor: 'GameOver'};
+var _user$project$Main$Start = {ctor: 'Start'};
+var _user$project$Main$initialGame = {
+	bird: _user$project$Main$initialBird,
+	pipes: {ctor: '[]'},
+	windowDimensions: {ctor: '_Tuple2', _0: _user$project$Main$gameWidth, _1: _user$project$Main$gameHeight},
+	state: _user$project$Main$Start
+};
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initialGame, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$Main$Play = {ctor: 'Play'};
+var _user$project$Main$update = F2(
+	function (msg, game) {
+		var _p2 = game.state;
+		switch (_p2.ctor) {
+			case 'Play':
+				var _p3 = msg;
+				switch (_p3.ctor) {
+					case 'TimeUpdate':
+						return {
+							ctor: '_Tuple2',
+							_0: _user$project$Main$updateFlappy(game),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					case 'KeyDown':
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								game,
+								{
+									bird: _user$project$Main$jump(game.bird)
+								}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					default:
+						return {
+							ctor: '_Tuple2',
+							_0: _user$project$Main$generateNewPipe(game),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+				}
+			case 'Start':
+				var _p4 = msg;
+				if (_p4.ctor === 'KeyDown') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							game,
+							{state: _user$project$Main$Play}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+				}
+			default:
+				return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+		}
 	});
 var _user$project$Main$GeneratePipe = function (a) {
 	return {ctor: 'GeneratePipe', _0: a};

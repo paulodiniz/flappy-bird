@@ -31,6 +31,7 @@ type alias Game =
     { bird : Bird
     , pipes : List Pipe
     , windowDimensions : ( Int, Int )
+    , state : GameState
     }
 
 
@@ -43,17 +44,23 @@ type alias Bird =
 
 
 type alias Pipe =
-    { x : Float
-    , y : Float
-    , height : Float
+    { height : Float
+    , passageSize : Float
     , passed : Bool
+    , x : Float
     }
+
+
+type GameState
+    = Play
+    | Start
+    | GameOver
 
 
 initialBird : Bird
 initialBird =
-    { x = 30
-    , y = 100
+    { x = -150
+    , y = 20
     , vx = 0
     , vy = 0
     }
@@ -68,6 +75,7 @@ initialGame =
     { bird = initialBird
     , pipes = []
     , windowDimensions = ( gameWidth, gameHeight )
+    , state = Start
     }
 
 
@@ -88,25 +96,38 @@ type Msg
 
 update : Msg -> Game -> ( Game, Cmd Msg )
 update msg game =
-    case msg of
-        TimeUpdate dt ->
-            ( updateFlappy game, Cmd.none )
+    case game.state of
+        Play ->
+            case msg of
+                TimeUpdate dt ->
+                    ( updateFlappy game, Cmd.none )
 
-        KeyDown keyCode ->
-            ( { game | bird = jump game.bird }, Cmd.none )
+                KeyDown keyCode ->
+                    ( { game | bird = jump game.bird }, Cmd.none )
 
-        GeneratePipe _ ->
-            ( generateNewPipe game, Cmd.none )
+                GeneratePipe _ ->
+                    ( generateNewPipe game, Cmd.none )
+
+        Start ->
+            case msg of
+                KeyDown keyCode ->
+                    ( { game | state = Play }, Cmd.none )
+
+                _ ->
+                    ( game, Cmd.none )
+
+        GameOver ->
+            ( game, Cmd.none )
 
 
 generateNewPipe : Game -> Game
 generateNewPipe game =
     let
         newPipe =
-            { x = 300
-            , y = 100
-            , height = 3
+            { height = 40
+            , passageSize = 200
             , passed = False
+            , x = 300
             }
     in
         { game | pipes = List.append game.pipes [ newPipe ] }
@@ -167,11 +188,7 @@ twoSeconds =
 
 updatePipes : Game -> Game
 updatePipes game =
-    let
-        updatedPipes =
-            List.map updatePipe game.pipes
-    in
-        { game | pipes = updatedPipes }
+    { game | pipes = List.map updatePipe game.pipes }
 
 
 updatePipe : Pipe -> Pipe
@@ -203,10 +220,10 @@ pipeToForms pipe =
     in
         [ image pipeWidth pipeHeight "pipe_down.png"
             |> toForm
-            |> move ( pipe.x, pipe.y - 250 )
+            |> move ( pipe.x, pipe.height - gameHeight / 2 )
         , image pipeWidth pipeHeight "pipe_up.png"
             |> toForm
-            |> move ( pipe.x, pipe.y )
+            |> move ( pipe.x, gameHeight / 2 - pipe.height )
         ]
 
 
