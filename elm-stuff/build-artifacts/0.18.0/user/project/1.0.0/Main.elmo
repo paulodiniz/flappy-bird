@@ -11,22 +11,12 @@ var _user$project$Main$updatePipes = function (game) {
 			pipes: A2(_elm_lang$core$List$map, _user$project$Main$updatePipe, game.pipes)
 		});
 };
-var _user$project$Main$twoSeconds = _elm_lang$core$Time$second * 2;
 var _user$project$Main$jump = function (bird) {
 	return _elm_lang$core$Native_Utils.update(
 		bird,
 		{vy: 8});
 };
 var _user$project$Main$gravityValue = 0.45;
-var _user$project$Main$physics = function (game) {
-	var bird = game.bird;
-	var newBird = _elm_lang$core$Native_Utils.update(
-		bird,
-		{y: bird.y + bird.vy});
-	return _elm_lang$core$Native_Utils.update(
-		game,
-		{bird: newBird});
-};
 var _user$project$Main$generateNewPipe = function (game) {
 	var newPipe = {height: 40, passageSize: 200, passed: false, x: 300};
 	return _elm_lang$core$Native_Utils.update(
@@ -52,6 +42,17 @@ var _user$project$Main$gravity = function (game) {
 		{
 			vy: (_elm_lang$core$Native_Utils.cmp(bird.y, 0 - (_user$project$Main$gameHeight / 2)) > 0) ? (bird.vy - _user$project$Main$gravityValue) : 0
 		});
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{bird: newBird});
+};
+var _user$project$Main$physics = function (game) {
+	var bird = game.bird;
+	var newBird = (_elm_lang$core$Native_Utils.cmp(bird.y, _user$project$Main$gameHeight / 2) < 1) ? _elm_lang$core$Native_Utils.update(
+		bird,
+		{y: bird.y + bird.vy}) : _elm_lang$core$Native_Utils.update(
+		bird,
+		{y: _user$project$Main$gameHeight / 2});
 	return _elm_lang$core$Native_Utils.update(
 		game,
 		{bird: newBird});
@@ -214,7 +215,7 @@ var _user$project$Main$subscriptions = function (model) {
 				_0: _elm_lang$keyboard$Keyboard$downs(_user$project$Main$KeyDown),
 				_1: {
 					ctor: '::',
-					_0: A2(_elm_lang$core$Time$every, _user$project$Main$twoSeconds, _user$project$Main$GeneratePipe),
+					_0: A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _user$project$Main$GeneratePipe),
 					_1: {ctor: '[]'}
 				}
 			}

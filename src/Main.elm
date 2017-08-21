@@ -167,7 +167,10 @@ physics game =
             game.bird
 
         newBird =
-            { bird | y = bird.y + bird.vy }
+            if bird.y <= (gameHeight/2) then
+                { bird | y = bird.y + bird.vy }
+            else
+                { bird | y = (gameHeight/2) }
     in
         { game | bird = newBird }
 
@@ -180,11 +183,6 @@ gravityValue =
 jump : Bird -> Bird
 jump bird =
     { bird | vy = 8 }
-
-
-twoSeconds : Time
-twoSeconds =
-    Time.second * 2
 
 
 updatePipes : Game -> Game
@@ -200,12 +198,15 @@ updatePipe pipe =
 checkCollisions : Game -> Game
 checkCollisions game =
     let
-        bird = game.bird
+        bird =
+            game.bird
     in
         if bird.y <= -(gameHeight / 2) then
             { game | state = GameOver }
         else
             game
+
+
 
 -- SUBSCRIPTIONS
 
@@ -215,7 +216,7 @@ subscriptions model =
     Sub.batch
         [ AnimationFrame.diffs TimeUpdate
         , Keyboard.downs KeyDown
-        , Time.every twoSeconds GeneratePipe
+        , Time.every second GeneratePipe
         ]
 
 
