@@ -7,7 +7,6 @@ import Element exposing (..)
 import Html exposing (Html, text)
 import Keyboard exposing (KeyCode)
 import Time exposing (..)
-import Array
 
 
 type alias Space =
@@ -30,7 +29,7 @@ main =
 
 type alias Game =
     { bird : Bird
-    , pipes : Array.Array Pipe
+    , pipes : List Pipe
     , windowDimensions : ( Int, Int )
     }
 
@@ -67,7 +66,7 @@ initialBird =
 initialGame : Game
 initialGame =
     { bird = initialBird
-    , pipes = Array.empty
+    , pipes = []
     , windowDimensions = ( gameWidth, gameHeight )
     }
 
@@ -110,7 +109,7 @@ generateNewPipe game =
           , passed = False
           }
     in
-      { game | pipes = Array.append game.pipes <| Array.fromList [newPipe] }
+      { game | pipes = List.append game.pipes [newPipe] }
 
 
 updateFlappy : Game -> Game
@@ -169,7 +168,7 @@ twoSeconds =
 updatePipes : Game -> Game
 updatePipes game =
     let
-        updatedPipes = Array.map updatePipe game.pipes
+        updatedPipes = List.map updatePipe game.pipes
     in
         { game | pipes = updatedPipes }
 
@@ -219,7 +218,7 @@ view game =
             10
 
         pipesForm =
-            Array.map pipeToForm game.pipes |> Array.toList
+            List.map pipeToForm game.pipes
 
         backgroundForms =
             [ rect gameWidth gameHeight |> filled blueSky ]
@@ -228,7 +227,7 @@ view game =
             [ birdImage |> toForm |> move ( bird.x, bird.y + groundY ) ]
 
         pipeForms =
-            Array.map pipeToForm game.pipes |> Array.toList
+            List.map pipeToForm game.pipes
 
         formList =
             List.append backgroundForms <|

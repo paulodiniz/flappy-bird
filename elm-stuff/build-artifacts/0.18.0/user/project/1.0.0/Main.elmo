@@ -14,7 +14,7 @@ var _user$project$Main$updatePipe = function (pipe) {
 		{x: pipe.x - 10});
 };
 var _user$project$Main$updatePipes = function (game) {
-	var updatedPipes = A2(_elm_lang$core$Array$map, _user$project$Main$updatePipe, game.pipes);
+	var updatedPipes = A2(_elm_lang$core$List$map, _user$project$Main$updatePipe, game.pipes);
 	return _elm_lang$core$Native_Utils.update(
 		game,
 		{pipes: updatedPipes});
@@ -41,14 +41,13 @@ var _user$project$Main$generateNewPipe = function (game) {
 		game,
 		{
 			pipes: A2(
-				_elm_lang$core$Array$append,
+				_elm_lang$core$List$append,
 				game.pipes,
-				_elm_lang$core$Array$fromList(
-					{
-						ctor: '::',
-						_0: newPipe,
-						_1: {ctor: '[]'}
-					}))
+				{
+					ctor: '::',
+					_0: newPipe,
+					_1: {ctor: '[]'}
+				})
 		});
 };
 var _user$project$Main$_p0 = {ctor: '_Tuple2', _0: 600, _1: 400};
@@ -99,8 +98,7 @@ var _user$project$Main$update = F2(
 		}
 	});
 var _user$project$Main$view = function (game) {
-	var pipeForms = _elm_lang$core$Array$toList(
-		A2(_elm_lang$core$Array$map, _user$project$Main$pipeToForm, game.pipes));
+	var pipeForms = A2(_elm_lang$core$List$map, _user$project$Main$pipeToForm, game.pipes);
 	var backgroundForms = {
 		ctor: '::',
 		_0: A2(
@@ -109,8 +107,7 @@ var _user$project$Main$view = function (game) {
 			A2(_evancz$elm_graphics$Collage$rect, _user$project$Main$gameWidth, _user$project$Main$gameHeight)),
 		_1: {ctor: '[]'}
 	};
-	var pipesForm = _elm_lang$core$Array$toList(
-		A2(_elm_lang$core$Array$map, _user$project$Main$pipeToForm, game.pipes));
+	var pipesForm = A2(_elm_lang$core$List$map, _user$project$Main$pipeToForm, game.pipes);
 	var groundY = 10;
 	var birdImage = A3(_evancz$elm_graphics$Element$image, 35, 35, 'flappy.png');
 	var bird = game.bird;
@@ -140,7 +137,7 @@ var _user$project$Main$view = function (game) {
 var _user$project$Main$initialBird = {x: 30, y: 100, vx: 0, vy: 0};
 var _user$project$Main$initialGame = {
 	bird: _user$project$Main$initialBird,
-	pipes: _elm_lang$core$Array$empty,
+	pipes: {ctor: '[]'},
 	windowDimensions: {ctor: '_Tuple2', _0: _user$project$Main$gameWidth, _1: _user$project$Main$gameHeight}
 };
 var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initialGame, _1: _elm_lang$core$Platform_Cmd$none};
