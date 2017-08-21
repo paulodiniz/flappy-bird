@@ -56,11 +56,6 @@ var _user$project$Main$gravity = function (game) {
 		game,
 		{bird: newBird});
 };
-var _user$project$Main$updateFlappy = function (game) {
-	return _user$project$Main$updatePipes(
-		_user$project$Main$physics(
-			_user$project$Main$gravity(game)));
-};
 var _user$project$Main$pipeToForms = function (pipe) {
 	var pipeHeight = 100;
 	var pipeWidth = 75;
@@ -132,6 +127,18 @@ var _user$project$Main$Pipe = F4(
 		return {height: a, passageSize: b, passed: c, x: d};
 	});
 var _user$project$Main$GameOver = {ctor: 'GameOver'};
+var _user$project$Main$checkCollisions = function (game) {
+	var bird = game.bird;
+	return (_elm_lang$core$Native_Utils.cmp(bird.y, 0 - (_user$project$Main$gameHeight / 2)) < 1) ? _elm_lang$core$Native_Utils.update(
+		game,
+		{state: _user$project$Main$GameOver}) : game;
+};
+var _user$project$Main$updateFlappy = function (game) {
+	return _user$project$Main$checkCollisions(
+		_user$project$Main$updatePipes(
+			_user$project$Main$physics(
+				_user$project$Main$gravity(game))));
+};
 var _user$project$Main$Start = {ctor: 'Start'};
 var _user$project$Main$initialGame = {
 	bird: _user$project$Main$initialBird,

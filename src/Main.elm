@@ -139,6 +139,7 @@ updateFlappy game =
         |> gravity
         |> physics
         |> updatePipes
+        |> checkCollisions
 
 
 gravity : Game -> Game
@@ -196,6 +197,15 @@ updatePipe pipe =
     { pipe | x = pipe.x - 10 }
 
 
+checkCollisions : Game -> Game
+checkCollisions game =
+    let
+        bird = game.bird
+    in
+        if bird.y <= -(gameHeight / 2) then
+            { game | state = GameOver }
+        else
+            game
 
 -- SUBSCRIPTIONS
 
