@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "main": "index.js",
     "repository": "git@github.com:paulodiniz/flappy-bird.git",
+    "homepage": "https://paulodiniz.github.io/flappy-bird",
     "author": "Paulo  Diniz <paulo.rc.diniz@gmail.com>",
     "license": "MIT",
     "dependencies": {
