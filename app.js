@@ -11670,14 +11670,14 @@ var _user$project$Main$pipeToForms = function (pipe) {
 			_evancz$elm_graphics$Collage$move,
 			{ctor: '_Tuple2', _0: pipe.x, _1: pipe.height - (_user$project$Main$gameHeight / 2)},
 			_evancz$elm_graphics$Collage$toForm(
-				A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, './pipe_down.png'))),
+				A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, './src/pipe_down.png'))),
 		_1: {
 			ctor: '::',
 			_0: A2(
 				_evancz$elm_graphics$Collage$move,
 				{ctor: '_Tuple2', _0: pipe.x, _1: (_user$project$Main$gameHeight / 2) - pipe.height},
 				_evancz$elm_graphics$Collage$toForm(
-					A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, './pipe_up.png'))),
+					A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, './src/pipe_up.png'))),
 			_1: {ctor: '[]'}
 		}
 	};
@@ -11693,7 +11693,7 @@ var _user$project$Main$view = function (game) {
 	};
 	var pipesForms = A2(_elm_lang$core$List$concatMap, _user$project$Main$pipeToForms, game.pipes);
 	var groundY = 10;
-	var birdImage = A3(_evancz$elm_graphics$Element$image, 35, 35, './flappy.png');
+	var birdImage = A3(_evancz$elm_graphics$Element$image, 35, 35, './src/flappy.png');
 	var bird = game.bird;
 	var birdForm = {
 		ctor: '::',
