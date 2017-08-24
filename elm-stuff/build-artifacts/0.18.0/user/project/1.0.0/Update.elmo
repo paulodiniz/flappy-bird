@@ -1,0 +1,123 @@
+var _user$project$Update$checkCollisions = function (game) {
+	var bird = game.bird;
+	return (_elm_lang$core$Native_Utils.cmp(bird.y, 0 - (_user$project$Model$gameHeight / 2)) < 1) ? _elm_lang$core$Native_Utils.update(
+		game,
+		{state: _user$project$Model$GameOver}) : game;
+};
+var _user$project$Update$updatePipe = function (pipe) {
+	return _elm_lang$core$Native_Utils.update(
+		pipe,
+		{x: pipe.x - 10});
+};
+var _user$project$Update$updatePipes = function (game) {
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{
+			pipes: A2(_elm_lang$core$List$map, _user$project$Update$updatePipe, game.pipes)
+		});
+};
+var _user$project$Update$jump = function (bird) {
+	return _elm_lang$core$Native_Utils.update(
+		bird,
+		{vy: 8});
+};
+var _user$project$Update$gravityValue = 0.45;
+var _user$project$Update$physics = function (game) {
+	var bird = game.bird;
+	var newBird = (_elm_lang$core$Native_Utils.cmp(bird.y, _user$project$Model$gameHeight / 2) < 1) ? _elm_lang$core$Native_Utils.update(
+		bird,
+		{y: bird.y + bird.vy}) : _elm_lang$core$Native_Utils.update(
+		bird,
+		{y: _user$project$Model$gameHeight / 2});
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{bird: newBird});
+};
+var _user$project$Update$gravity = function (game) {
+	var bird = game.bird;
+	var newBird = _elm_lang$core$Native_Utils.update(
+		bird,
+		{
+			vy: (_elm_lang$core$Native_Utils.cmp(bird.y, 0 - (_user$project$Model$gameHeight / 2)) > 0) ? (bird.vy - _user$project$Update$gravityValue) : 0
+		});
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{bird: newBird});
+};
+var _user$project$Update$updateFlappy = function (game) {
+	return _user$project$Update$checkCollisions(
+		_user$project$Update$updatePipes(
+			_user$project$Update$physics(
+				_user$project$Update$gravity(game))));
+};
+var _user$project$Update$generateNewPipe = function (game) {
+	var newPipe = {height: 40, passageSize: 200, passed: false, x: 300};
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{
+			pipes: A2(
+				_elm_lang$core$List$append,
+				game.pipes,
+				{
+					ctor: '::',
+					_0: newPipe,
+					_1: {ctor: '[]'}
+				})
+		});
+};
+var _user$project$Update$update = F2(
+	function (msg, game) {
+		var _p0 = game.state;
+		switch (_p0.ctor) {
+			case 'Play':
+				var _p1 = msg;
+				switch (_p1.ctor) {
+					case 'TimeUpdate':
+						return {
+							ctor: '_Tuple2',
+							_0: _user$project$Update$updateFlappy(game),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					case 'KeyDown':
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								game,
+								{
+									bird: _user$project$Update$jump(game.bird)
+								}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					default:
+						return {
+							ctor: '_Tuple2',
+							_0: _user$project$Update$generateNewPipe(game),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+				}
+			case 'Start':
+				var _p2 = msg;
+				if (_p2.ctor === 'KeyDown') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							game,
+							{state: _user$project$Model$Play}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+				}
+			default:
+				return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
+var _user$project$Update$GeneratePipe = function (a) {
+	return {ctor: 'GeneratePipe', _0: a};
+};
+var _user$project$Update$KeyDown = function (a) {
+	return {ctor: 'KeyDown', _0: a};
+};
+var _user$project$Update$TimeUpdate = function (a) {
+	return {ctor: 'TimeUpdate', _0: a};
+};

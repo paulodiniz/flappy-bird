@@ -1,0 +1,58 @@
+var _user$project$View$pipeToForms = function (pipe) {
+	var pipeHeight = 100;
+	var pipeWidth = 75;
+	return {
+		ctor: '::',
+		_0: A2(
+			_evancz$elm_graphics$Collage$move,
+			{ctor: '_Tuple2', _0: pipe.x, _1: pipe.height - (_user$project$Model$gameHeight / 2)},
+			_evancz$elm_graphics$Collage$toForm(
+				A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, './src/pipe_down.png'))),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_evancz$elm_graphics$Collage$move,
+				{ctor: '_Tuple2', _0: pipe.x, _1: (_user$project$Model$gameHeight / 2) - pipe.height},
+				_evancz$elm_graphics$Collage$toForm(
+					A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, './src/pipe_up.png'))),
+			_1: {ctor: '[]'}
+		}
+	};
+};
+var _user$project$View$blueSky = A3(_elm_lang$core$Color$rgb, 174, 238, 238);
+var _user$project$View$view = function (game) {
+	var backgroundForms = {
+		ctor: '::',
+		_0: A2(
+			_evancz$elm_graphics$Collage$filled,
+			_user$project$View$blueSky,
+			A2(_evancz$elm_graphics$Collage$rect, _user$project$Model$gameWidth, _user$project$Model$gameHeight)),
+		_1: {ctor: '[]'}
+	};
+	var pipesForms = A2(_elm_lang$core$List$concatMap, _user$project$View$pipeToForms, game.pipes);
+	var groundY = 10;
+	var birdImage = A3(_evancz$elm_graphics$Element$image, 35, 35, './src/flappy.png');
+	var bird = game.bird;
+	var birdForm = {
+		ctor: '::',
+		_0: A2(
+			_evancz$elm_graphics$Collage$move,
+			{ctor: '_Tuple2', _0: bird.x, _1: bird.y + groundY},
+			_evancz$elm_graphics$Collage$toForm(birdImage)),
+		_1: {ctor: '[]'}
+	};
+	var formList = A2(
+		_elm_lang$core$List$append,
+		backgroundForms,
+		A2(_elm_lang$core$List$append, birdForm, pipesForms));
+	var _p0 = game.windowDimensions;
+	var w = _p0._0;
+	var h = _p0._1;
+	return _evancz$elm_graphics$Element$toHtml(
+		A4(
+			_evancz$elm_graphics$Element$container,
+			w,
+			h,
+			_evancz$elm_graphics$Element$middle,
+			A3(_evancz$elm_graphics$Collage$collage, _user$project$Model$gameWidth, _user$project$Model$gameHeight, formList)));
+};
