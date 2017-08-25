@@ -58,10 +58,10 @@ pipeToForms pipe =
         img =
             case pipe.direction of
                 Up ->
-                    "./src/pipe_up.png"
+                    "img/pipe_up.png"
 
                 Down ->
-                    "./pipe_down.png"
+                    "img/pipe_down.png"
     in
         [ image pipeWidth pipeHeight img
             |> toForm

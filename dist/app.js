@@ -11634,9 +11634,9 @@ var _user$project$View$pipeToForms = function (pipe) {
 	var img = function () {
 		var _p0 = pipe.direction;
 		if (_p0.ctor === 'Up') {
-			return './src/pipe_up.png';
+			return 'img/pipe_up.png';
 		} else {
-			return './pipe_down.png';
+			return 'img/pipe_down.png';
 		}
 	}();
 	var pipeHeight = _elm_lang$core$Basics$round(pipe.height);

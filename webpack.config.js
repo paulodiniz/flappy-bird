@@ -1,4 +1,5 @@
 var path = require("path");
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -12,6 +13,13 @@ module.exports = {
         filename: '[name].js',
     },
 
+    plugins: [
+        new CopyWebpackPlugin([
+            { from: './src/flappy.png', to: 'img' },
+            { from: './src/pipe_down.png', to: 'img' },
+            { from: './src/pipe_up.png', to: 'img' },
+        ])
+    ],
     module: {
         rules: [
             {
@@ -39,6 +47,7 @@ module.exports = {
                 test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: 'file-loader',
             },
+
             { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' } // inline base64 URLs for <=8k images, direct URLs for the rest
 
         ],
