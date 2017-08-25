@@ -11605,7 +11605,7 @@ var _evancz$elm_graphics$Collage$ngon = F2(
 var _user$project$Model$_p0 = {ctor: '_Tuple2', _0: 600, _1: 400};
 var _user$project$Model$gameWidth = _user$project$Model$_p0._0;
 var _user$project$Model$gameHeight = _user$project$Model$_p0._1;
-var _user$project$Model$initialBird = {x: -150, y: 20, vx: 10, vy: 0};
+var _user$project$Model$initialBird = {x: -150, y: 20, vx: 5, vy: 0};
 var _user$project$Model$Game = F4(
 	function (a, b, c, d) {
 		return {bird: a, pipes: b, windowDimensions: c, state: d};
@@ -11636,7 +11636,7 @@ var _user$project$View$pipeToForms = function (pipe) {
 		if (_p0.ctor === 'Up') {
 			return './src/pipe_up.png';
 		} else {
-			return './src/pipe_down.png';
+			return './pipe_down.png';
 		}
 	}();
 	var pipeHeight = _elm_lang$core$Basics$round(pipe.height);
@@ -11873,7 +11873,7 @@ var _user$project$Main$subscriptions = function (model) {
 				_0: _elm_lang$keyboard$Keyboard$downs(_user$project$Update$KeyDown),
 				_1: {
 					ctor: '::',
-					_0: A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _user$project$Update$GeneratePipe),
+					_0: A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second * 2, _user$project$Update$GeneratePipe),
 					_1: {ctor: '[]'}
 				}
 			}
