@@ -8,7 +8,7 @@ var _user$project$Main$subscriptions = function (model) {
 				_0: _elm_lang$keyboard$Keyboard$downs(_user$project$Update$KeyDown),
 				_1: {
 					ctor: '::',
-					_0: A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _user$project$Update$GeneratePipe),
+					_0: A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second * 2, _user$project$Update$GeneratePipe),
 					_1: {ctor: '[]'}
 				}
 			}

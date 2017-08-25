@@ -33,7 +33,7 @@ subscriptions model =
     Sub.batch
         [ AnimationFrame.diffs TimeUpdate
         , Keyboard.downs KeyDown
-        , Time.every second GeneratePipe
+        , Time.every (Time.second * 2) GeneratePipe
         ]
 
 

@@ -37,7 +37,7 @@ initialBird : Bird
 initialBird =
     { x = -150
     , y = 20
-    , vx = 10
+    , vx = 5
     , vy = 0
     }
 
