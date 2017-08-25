@@ -17,7 +17,7 @@ view game =
             game.bird
 
         birdImage =
-            image 35 35 "./src/flappy.png"
+            image 35 35 "img/flappy.png"
 
         groundY =
             10

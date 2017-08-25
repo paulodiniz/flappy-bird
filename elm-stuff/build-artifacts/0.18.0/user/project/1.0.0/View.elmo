@@ -31,7 +31,7 @@ var _user$project$View$view = function (game) {
 	};
 	var pipesForms = A2(_elm_lang$core$List$concatMap, _user$project$View$pipeToForms, game.pipes);
 	var groundY = 10;
-	var birdImage = A3(_evancz$elm_graphics$Element$image, 35, 35, './src/flappy.png');
+	var birdImage = A3(_evancz$elm_graphics$Element$image, 35, 35, 'img/flappy.png');
 	var bird = game.bird;
 	var birdForm = {
 		ctor: '::',
