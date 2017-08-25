@@ -1,18 +1,20 @@
 var _user$project$Update$isColiding = F2(
 	function (bird, pipe) {
+		var downPipe = pipe.y - (pipe.height / 2);
 		var upPipe = pipe.y + (pipe.height / 2);
 		var rightPipe = pipe.x + (pipe.width / 2);
 		var leftPipe = pipe.x - (pipe.width / 2);
 		var birdHeight = 35;
+		var upBird = bird.y + (birdHeight / 2);
 		var downBird = bird.y - (birdHeight / 2);
 		var birdWidth = 35;
 		var rightBird = bird.x + (birdWidth / 2);
 		var leftBird = bird.x - (birdWidth / 2);
 		var _p0 = pipe.direction;
 		if (_p0.ctor === 'Down') {
-			return (_elm_lang$core$Native_Utils.cmp(rightBird, leftPipe) > 0) && ((_elm_lang$core$Native_Utils.cmp(leftBird, rightPipe) < 0) && (_elm_lang$core$Native_Utils.cmp(downBird, upPipe) < 0));
+			return (_elm_lang$core$Native_Utils.cmp(rightBird, leftPipe) > 0) && ((_elm_lang$core$Native_Utils.cmp(leftBird, rightPipe) < 0) && ((_elm_lang$core$Native_Utils.cmp(downBird, upPipe) < 0) && (_elm_lang$core$Native_Utils.cmp(upBird, downPipe) > 0)));
 		} else {
-			return false;
+			return (_elm_lang$core$Native_Utils.cmp(rightBird, leftPipe) > 0) && ((_elm_lang$core$Native_Utils.cmp(leftBird, rightPipe) < 0) && ((_elm_lang$core$Native_Utils.cmp(upBird, downPipe) > 0) && (_elm_lang$core$Native_Utils.cmp(upBird, downPipe) > 0)));
 		}
 	});
 var _user$project$Update$checkPipeColision = function (game) {
@@ -94,8 +96,8 @@ var _user$project$Update$updateFlappy = function (game) {
 					_user$project$Update$gravity(game)))));
 };
 var _user$project$Update$generateNewPipe = function (game) {
-	var downPipe = {height: 90, width: 75, x: 300, y: (0 - _user$project$Model$gameHeight) / 2, direction: _user$project$Model$Down};
-	var upPipe = {height: 90, width: 75, x: 300, y: _user$project$Model$gameHeight / 2, direction: _user$project$Model$Up};
+	var downPipe = {height: 300, width: 75, x: 300, y: (0 - _user$project$Model$gameHeight) / 2, direction: _user$project$Model$Down};
+	var upPipe = {height: 300, width: 75, x: 300, y: _user$project$Model$gameHeight / 2, direction: _user$project$Model$Up};
 	return _elm_lang$core$Native_Utils.update(
 		game,
 		{

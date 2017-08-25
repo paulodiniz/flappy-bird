@@ -3,7 +3,6 @@ module Update exposing (..)
 import Keyboard exposing (KeyCode)
 import Time exposing (..)
 import Model exposing (..)
-import Debug exposing (..)
 
 type Msg
     = TimeUpdate Time
@@ -42,7 +41,7 @@ generateNewPipe : Game -> Game
 generateNewPipe game =
     let
         upPipe =
-            { height = 90
+            { height = 300
             , width = 75
             , x = 300
             , y = gameHeight / 2
@@ -50,7 +49,7 @@ generateNewPipe game =
             }
 
         downPipe =
-            { height = 90
+            { height = 300
             , width = 75
             , x = 300
             , y = -gameHeight / 2
@@ -181,15 +180,21 @@ isColiding bird pipe =
         upPipe =
             pipe.y + pipe.height / 2
 
+        downPipe =
+            pipe.y - pipe.height / 2
+
+        upBird =
+            bird.y + birdHeight / 2
+
         downBird =
             bird.y - birdHeight / 2
+
     in
         case pipe.direction of
             Down ->
-                (rightBird > leftPipe) && (leftBird < rightPipe)
-                    && (downBird < upPipe)
+                (rightBird > leftPipe) && (leftBird < rightPipe) && (downBird < upPipe) && (upBird > downPipe)
             Up ->
-                False
+                (rightBird > leftPipe) && (leftBird < rightPipe) && (upBird > downPipe) && (upBird > downPipe)
 
 
 
