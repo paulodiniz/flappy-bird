@@ -11602,96 +11602,66 @@ var _evancz$elm_graphics$Collage$ngon = F2(
 				A2(_elm_lang$core$List$range, 0, n - 1)));
 	});
 
-var _user$project$Main$blueSky = A3(_elm_lang$core$Color$rgb, 174, 238, 238);
-var _user$project$Main$updatePipe = function (pipe) {
-	return _elm_lang$core$Native_Utils.update(
-		pipe,
-		{x: pipe.x - 10});
+var _user$project$Model$_p0 = {ctor: '_Tuple2', _0: 600, _1: 400};
+var _user$project$Model$gameWidth = _user$project$Model$_p0._0;
+var _user$project$Model$gameHeight = _user$project$Model$_p0._1;
+var _user$project$Model$initialBird = {x: -150, y: 20, vx: 10, vy: 0};
+var _user$project$Model$Game = F4(
+	function (a, b, c, d) {
+		return {bird: a, pipes: b, windowDimensions: c, state: d};
+	});
+var _user$project$Model$Bird = F4(
+	function (a, b, c, d) {
+		return {x: a, y: b, vx: c, vy: d};
+	});
+var _user$project$Model$Pipe = F5(
+	function (a, b, c, d, e) {
+		return {height: a, width: b, x: c, y: d, direction: e};
+	});
+var _user$project$Model$Down = {ctor: 'Down'};
+var _user$project$Model$Up = {ctor: 'Up'};
+var _user$project$Model$GameOver = {ctor: 'GameOver'};
+var _user$project$Model$Start = {ctor: 'Start'};
+var _user$project$Model$initialGame = {
+	bird: _user$project$Model$initialBird,
+	pipes: {ctor: '[]'},
+	windowDimensions: {ctor: '_Tuple2', _0: _user$project$Model$gameWidth, _1: _user$project$Model$gameHeight},
+	state: _user$project$Model$Start
 };
-var _user$project$Main$updatePipes = function (game) {
-	return _elm_lang$core$Native_Utils.update(
-		game,
-		{
-			pipes: A2(_elm_lang$core$List$map, _user$project$Main$updatePipe, game.pipes)
-		});
-};
-var _user$project$Main$jump = function (bird) {
-	return _elm_lang$core$Native_Utils.update(
-		bird,
-		{vy: 8});
-};
-var _user$project$Main$gravityValue = 0.45;
-var _user$project$Main$generateNewPipe = function (game) {
-	var newPipe = {height: 40, passageSize: 200, passed: false, x: 300};
-	return _elm_lang$core$Native_Utils.update(
-		game,
-		{
-			pipes: A2(
-				_elm_lang$core$List$append,
-				game.pipes,
-				{
-					ctor: '::',
-					_0: newPipe,
-					_1: {ctor: '[]'}
-				})
-		});
-};
-var _user$project$Main$_p0 = {ctor: '_Tuple2', _0: 600, _1: 400};
-var _user$project$Main$gameWidth = _user$project$Main$_p0._0;
-var _user$project$Main$gameHeight = _user$project$Main$_p0._1;
-var _user$project$Main$gravity = function (game) {
-	var bird = game.bird;
-	var newBird = _elm_lang$core$Native_Utils.update(
-		bird,
-		{
-			vy: (_elm_lang$core$Native_Utils.cmp(bird.y, 0 - (_user$project$Main$gameHeight / 2)) > 0) ? (bird.vy - _user$project$Main$gravityValue) : 0
-		});
-	return _elm_lang$core$Native_Utils.update(
-		game,
-		{bird: newBird});
-};
-var _user$project$Main$physics = function (game) {
-	var bird = game.bird;
-	var newBird = (_elm_lang$core$Native_Utils.cmp(bird.y, _user$project$Main$gameHeight / 2) < 1) ? _elm_lang$core$Native_Utils.update(
-		bird,
-		{y: bird.y + bird.vy}) : _elm_lang$core$Native_Utils.update(
-		bird,
-		{y: _user$project$Main$gameHeight / 2});
-	return _elm_lang$core$Native_Utils.update(
-		game,
-		{bird: newBird});
-};
-var _user$project$Main$pipeToForms = function (pipe) {
-	var pipeHeight = 100;
-	var pipeWidth = 75;
+var _user$project$Model$Play = {ctor: 'Play'};
+
+var _user$project$View$pipeToForms = function (pipe) {
+	var img = function () {
+		var _p0 = pipe.direction;
+		if (_p0.ctor === 'Up') {
+			return './src/pipe_up.png';
+		} else {
+			return './src/pipe_down.png';
+		}
+	}();
+	var pipeHeight = _elm_lang$core$Basics$round(pipe.height);
+	var pipeWidth = _elm_lang$core$Basics$round(pipe.width);
 	return {
 		ctor: '::',
 		_0: A2(
 			_evancz$elm_graphics$Collage$move,
-			{ctor: '_Tuple2', _0: pipe.x, _1: pipe.height - (_user$project$Main$gameHeight / 2)},
+			{ctor: '_Tuple2', _0: pipe.x, _1: pipe.y},
 			_evancz$elm_graphics$Collage$toForm(
-				A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, './src/pipe_down.png'))),
-		_1: {
-			ctor: '::',
-			_0: A2(
-				_evancz$elm_graphics$Collage$move,
-				{ctor: '_Tuple2', _0: pipe.x, _1: (_user$project$Main$gameHeight / 2) - pipe.height},
-				_evancz$elm_graphics$Collage$toForm(
-					A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, './src/pipe_up.png'))),
-			_1: {ctor: '[]'}
-		}
+				A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, img))),
+		_1: {ctor: '[]'}
 	};
 };
-var _user$project$Main$view = function (game) {
+var _user$project$View$blueSky = A3(_elm_lang$core$Color$rgb, 174, 238, 238);
+var _user$project$View$view = function (game) {
 	var backgroundForms = {
 		ctor: '::',
 		_0: A2(
 			_evancz$elm_graphics$Collage$filled,
-			_user$project$Main$blueSky,
-			A2(_evancz$elm_graphics$Collage$rect, _user$project$Main$gameWidth, _user$project$Main$gameHeight)),
+			_user$project$View$blueSky,
+			A2(_evancz$elm_graphics$Collage$rect, _user$project$Model$gameWidth, _user$project$Model$gameHeight)),
 		_1: {ctor: '[]'}
 	};
-	var pipesForms = A2(_elm_lang$core$List$concatMap, _user$project$Main$pipeToForms, game.pipes);
+	var pipesForms = A2(_elm_lang$core$List$concatMap, _user$project$View$pipeToForms, game.pipes);
 	var groundY = 10;
 	var birdImage = A3(_evancz$elm_graphics$Element$image, 35, 35, './src/flappy.png');
 	var bird = game.bird;
@@ -11716,54 +11686,137 @@ var _user$project$Main$view = function (game) {
 			w,
 			h,
 			_evancz$elm_graphics$Element$middle,
-			A3(_evancz$elm_graphics$Collage$collage, _user$project$Main$gameWidth, _user$project$Main$gameHeight, formList)));
+			A3(_evancz$elm_graphics$Collage$collage, _user$project$Model$gameWidth, _user$project$Model$gameHeight, formList)));
 };
-var _user$project$Main$initialBird = {x: -150, y: 20, vx: 0, vy: 0};
-var _user$project$Main$Game = F4(
-	function (a, b, c, d) {
-		return {bird: a, pipes: b, windowDimensions: c, state: d};
+
+var _user$project$Update$isColiding = F2(
+	function (bird, pipe) {
+		var downPipe = pipe.y - (pipe.height / 2);
+		var upPipe = pipe.y + (pipe.height / 2);
+		var rightPipe = pipe.x + (pipe.width / 2);
+		var leftPipe = pipe.x - (pipe.width / 2);
+		var birdHeight = 35;
+		var upBird = bird.y + (birdHeight / 2);
+		var downBird = bird.y - (birdHeight / 2);
+		var birdWidth = 35;
+		var rightBird = bird.x + (birdWidth / 2);
+		var leftBird = bird.x - (birdWidth / 2);
+		var _p0 = pipe.direction;
+		if (_p0.ctor === 'Down') {
+			return (_elm_lang$core$Native_Utils.cmp(rightBird, leftPipe) > 0) && ((_elm_lang$core$Native_Utils.cmp(leftBird, rightPipe) < 0) && ((_elm_lang$core$Native_Utils.cmp(downBird, upPipe) < 0) && (_elm_lang$core$Native_Utils.cmp(upBird, downPipe) > 0)));
+		} else {
+			return (_elm_lang$core$Native_Utils.cmp(rightBird, leftPipe) > 0) && ((_elm_lang$core$Native_Utils.cmp(leftBird, rightPipe) < 0) && ((_elm_lang$core$Native_Utils.cmp(upBird, downPipe) > 0) && (_elm_lang$core$Native_Utils.cmp(upBird, downPipe) > 0)));
+		}
 	});
-var _user$project$Main$Bird = F4(
-	function (a, b, c, d) {
-		return {x: a, y: b, vx: c, vy: d};
-	});
-var _user$project$Main$Pipe = F4(
-	function (a, b, c, d) {
-		return {height: a, passageSize: b, passed: c, x: d};
-	});
-var _user$project$Main$GameOver = {ctor: 'GameOver'};
-var _user$project$Main$checkCollisions = function (game) {
+var _user$project$Update$checkPipeColision = function (game) {
 	var bird = game.bird;
-	return (_elm_lang$core$Native_Utils.cmp(bird.y, 0 - (_user$project$Main$gameHeight / 2)) < 1) ? _elm_lang$core$Native_Utils.update(
+	var pipesToCheck = A2(
+		_elm_lang$core$List$filter,
+		function (pipe) {
+			return _elm_lang$core$Native_Utils.cmp(pipe.x, bird.x) > -1;
+		},
+		game.pipes);
+	var pipesColiding = A2(
+		_elm_lang$core$List$any,
+		function (pipe) {
+			return A2(_user$project$Update$isColiding, bird, pipe);
+		},
+		pipesToCheck);
+	return pipesColiding ? _elm_lang$core$Native_Utils.update(
 		game,
-		{state: _user$project$Main$GameOver}) : game;
+		{state: _user$project$Model$GameOver}) : game;
 };
-var _user$project$Main$updateFlappy = function (game) {
-	return _user$project$Main$checkCollisions(
-		_user$project$Main$updatePipes(
-			_user$project$Main$physics(
-				_user$project$Main$gravity(game))));
+var _user$project$Update$upperLimit = function (game) {
+	var bird = game.bird;
+	return (_elm_lang$core$Native_Utils.cmp(bird.y, 0 - (_user$project$Model$gameHeight / 2)) < 1) ? _elm_lang$core$Native_Utils.update(
+		game,
+		{state: _user$project$Model$GameOver}) : game;
 };
-var _user$project$Main$Start = {ctor: 'Start'};
-var _user$project$Main$initialGame = {
-	bird: _user$project$Main$initialBird,
-	pipes: {ctor: '[]'},
-	windowDimensions: {ctor: '_Tuple2', _0: _user$project$Main$gameWidth, _1: _user$project$Main$gameHeight},
-	state: _user$project$Main$Start
+var _user$project$Update$updatePipe = F2(
+	function (bird, pipe) {
+		return _elm_lang$core$Native_Utils.update(
+			pipe,
+			{x: pipe.x - bird.vx});
+	});
+var _user$project$Update$updatePipes = function (game) {
+	var bird = game.bird;
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{
+			pipes: A2(
+				_elm_lang$core$List$map,
+				function (pipe) {
+					return A2(_user$project$Update$updatePipe, bird, pipe);
+				},
+				game.pipes)
+		});
 };
-var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initialGame, _1: _elm_lang$core$Platform_Cmd$none};
-var _user$project$Main$Play = {ctor: 'Play'};
-var _user$project$Main$update = F2(
+var _user$project$Update$jump = function (bird) {
+	return _elm_lang$core$Native_Utils.update(
+		bird,
+		{vy: 8});
+};
+var _user$project$Update$gravityValue = 0.45;
+var _user$project$Update$physics = function (game) {
+	var bird = game.bird;
+	var newBird = (_elm_lang$core$Native_Utils.cmp(bird.y, _user$project$Model$gameHeight / 2) < 1) ? _elm_lang$core$Native_Utils.update(
+		bird,
+		{y: bird.y + bird.vy}) : _elm_lang$core$Native_Utils.update(
+		bird,
+		{y: _user$project$Model$gameHeight / 2});
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{bird: newBird});
+};
+var _user$project$Update$gravity = function (game) {
+	var bird = game.bird;
+	var newBird = _elm_lang$core$Native_Utils.update(
+		bird,
+		{
+			vy: (_elm_lang$core$Native_Utils.cmp(bird.y, 0 - (_user$project$Model$gameHeight / 2)) > 0) ? (bird.vy - _user$project$Update$gravityValue) : 0
+		});
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{bird: newBird});
+};
+var _user$project$Update$updateFlappy = function (game) {
+	return _user$project$Update$checkPipeColision(
+		_user$project$Update$upperLimit(
+			_user$project$Update$updatePipes(
+				_user$project$Update$physics(
+					_user$project$Update$gravity(game)))));
+};
+var _user$project$Update$generateNewPipe = function (game) {
+	var downPipe = {height: 300, width: 75, x: 300, y: (0 - _user$project$Model$gameHeight) / 2, direction: _user$project$Model$Down};
+	var upPipe = {height: 300, width: 75, x: 300, y: _user$project$Model$gameHeight / 2, direction: _user$project$Model$Up};
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{
+			pipes: A2(
+				_elm_lang$core$List$append,
+				game.pipes,
+				{
+					ctor: '::',
+					_0: upPipe,
+					_1: {
+						ctor: '::',
+						_0: downPipe,
+						_1: {ctor: '[]'}
+					}
+				})
+		});
+};
+var _user$project$Update$update = F2(
 	function (msg, game) {
-		var _p2 = game.state;
-		switch (_p2.ctor) {
+		var _p1 = game.state;
+		switch (_p1.ctor) {
 			case 'Play':
-				var _p3 = msg;
-				switch (_p3.ctor) {
+				var _p2 = msg;
+				switch (_p2.ctor) {
 					case 'TimeUpdate':
 						return {
 							ctor: '_Tuple2',
-							_0: _user$project$Main$updateFlappy(game),
+							_0: _user$project$Update$updateFlappy(game),
 							_1: _elm_lang$core$Platform_Cmd$none
 						};
 					case 'KeyDown':
@@ -11772,25 +11825,25 @@ var _user$project$Main$update = F2(
 							_0: _elm_lang$core$Native_Utils.update(
 								game,
 								{
-									bird: _user$project$Main$jump(game.bird)
+									bird: _user$project$Update$jump(game.bird)
 								}),
 							_1: _elm_lang$core$Platform_Cmd$none
 						};
 					default:
 						return {
 							ctor: '_Tuple2',
-							_0: _user$project$Main$generateNewPipe(game),
+							_0: _user$project$Update$generateNewPipe(game),
 							_1: _elm_lang$core$Platform_Cmd$none
 						};
 				}
 			case 'Start':
-				var _p4 = msg;
-				if (_p4.ctor === 'KeyDown') {
+				var _p3 = msg;
+				if (_p3.ctor === 'KeyDown') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							game,
-							{state: _user$project$Main$Play}),
+							{state: _user$project$Model$Play}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
@@ -11800,33 +11853,35 @@ var _user$project$Main$update = F2(
 				return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
-var _user$project$Main$GeneratePipe = function (a) {
+var _user$project$Update$GeneratePipe = function (a) {
 	return {ctor: 'GeneratePipe', _0: a};
 };
-var _user$project$Main$KeyDown = function (a) {
+var _user$project$Update$KeyDown = function (a) {
 	return {ctor: 'KeyDown', _0: a};
 };
-var _user$project$Main$TimeUpdate = function (a) {
+var _user$project$Update$TimeUpdate = function (a) {
 	return {ctor: 'TimeUpdate', _0: a};
 };
+
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$batch(
 		{
 			ctor: '::',
-			_0: _elm_lang$animation_frame$AnimationFrame$diffs(_user$project$Main$TimeUpdate),
+			_0: _elm_lang$animation_frame$AnimationFrame$diffs(_user$project$Update$TimeUpdate),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$keyboard$Keyboard$downs(_user$project$Main$KeyDown),
+				_0: _elm_lang$keyboard$Keyboard$downs(_user$project$Update$KeyDown),
 				_1: {
 					ctor: '::',
-					_0: A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _user$project$Main$GeneratePipe),
+					_0: A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _user$project$Update$GeneratePipe),
 					_1: {ctor: '[]'}
 				}
 			}
 		});
 };
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Model$initialGame, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$main = _elm_lang$html$Html$program(
-	{init: _user$project$Main$init, view: _user$project$Main$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})();
+	{init: _user$project$Main$init, view: _user$project$View$view, update: _user$project$Update$update, subscriptions: _user$project$Main$subscriptions})();
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
