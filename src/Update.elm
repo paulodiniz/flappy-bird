@@ -3,11 +3,13 @@ module Update exposing (..)
 import Keyboard exposing (KeyCode)
 import Time exposing (..)
 import Model exposing (..)
+import Debug exposing (..)
 
 type Msg
     = TimeUpdate Time
     | KeyDown KeyCode
     | GeneratePipe Time
+
 
 update : Msg -> Game -> ( Game, Cmd Msg )
 update msg game =
@@ -15,6 +17,7 @@ update msg game =
         Play ->
             case msg of
                 TimeUpdate dt ->
+                    -- This is not regular
                     ( updateFlappy game, Cmd.none )
 
                 KeyDown keyCode ->
@@ -38,14 +41,23 @@ update msg game =
 generateNewPipe : Game -> Game
 generateNewPipe game =
     let
-        newPipe =
-            { height = 40
-            , passageSize = 200
-            , passed = False
+        upPipe =
+            { height = 90
+            , width = 75
             , x = 300
+            , y = gameHeight / 2
+            , direction = Up
+            }
+
+        downPipe =
+            { height = 90
+            , width = 75
+            , x = 300
+            , y = -gameHeight / 2
+            , direction = Down
             }
     in
-        { game | pipes = List.append game.pipes [ newPipe ] }
+        { game | pipes = List.append game.pipes [ upPipe, downPipe ] }
 
 
 updateFlappy : Game -> Game
@@ -54,7 +66,8 @@ updateFlappy game =
         |> gravity
         |> physics
         |> updatePipes
-        |> checkCollisions
+        |> upperLimit
+        |> checkPipeColision
 
 
 gravity : Game -> Game
@@ -82,10 +95,10 @@ physics game =
             game.bird
 
         newBird =
-            if bird.y <= (gameHeight/2) then
+            if bird.y <= (gameHeight / 2) then
                 { bird | y = bird.y + bird.vy }
             else
-                { bird | y = (gameHeight/2) }
+                { bird | y = (gameHeight / 2) }
     in
         { game | bird = newBird }
 
@@ -102,16 +115,20 @@ jump bird =
 
 updatePipes : Game -> Game
 updatePipes game =
-    { game | pipes = List.map updatePipe game.pipes }
+    let
+        bird =
+            game.bird
+    in
+        { game | pipes = List.map (\pipe -> updatePipe bird pipe) game.pipes }
 
 
-updatePipe : Pipe -> Pipe
-updatePipe pipe =
-    { pipe | x = pipe.x - 10 }
+updatePipe : Bird -> Pipe -> Pipe
+updatePipe bird pipe =
+    { pipe | x = pipe.x - bird.vx }
 
 
-checkCollisions : Game -> Game
-checkCollisions game =
+upperLimit : Game -> Game
+upperLimit game =
     let
         bird =
             game.bird
@@ -120,3 +137,59 @@ checkCollisions game =
             { game | state = GameOver }
         else
             game
+
+
+checkPipeColision : Game -> Game
+checkPipeColision game =
+    let
+        bird =
+            game.bird
+
+        pipesToCheck =
+            List.filter (\pipe -> pipe.x >= bird.x) game.pipes
+
+        pipesColiding =
+            List.any (\pipe -> isColiding bird pipe) pipesToCheck
+    in
+        if pipesColiding then
+            { game | state = GameOver }
+        else
+            game
+
+
+isColiding : Bird -> Pipe -> Bool
+isColiding bird pipe =
+    let
+        birdWidth =
+            35
+
+        birdHeight =
+            35
+
+        rightBird =
+            bird.x + birdWidth / 2
+
+        leftBird =
+            bird.x - birdWidth / 2
+
+        leftPipe =
+            pipe.x - pipe.width / 2
+
+        rightPipe =
+            pipe.x + pipe.width / 2
+
+        upPipe =
+            pipe.y + pipe.height / 2
+
+        downBird =
+            bird.y - birdHeight / 2
+    in
+        case pipe.direction of
+            Down ->
+                (rightBird > leftPipe) && (leftBird < rightPipe)
+                    && (downBird < upPipe)
+            Up ->
+                False
+
+
+

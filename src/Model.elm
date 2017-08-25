@@ -19,11 +19,13 @@ type alias Bird =
 
 type alias Pipe =
     { height : Float
-    , passageSize : Float
-    , passed : Bool
+    , width : Float
     , x : Float
+    , y : Float
+    , direction: Direction
     }
 
+type Direction = Up | Down
 
 type GameState
     = Play
@@ -35,14 +37,12 @@ initialBird : Bird
 initialBird =
     { x = -150
     , y = 20
-    , vx = 0
+    , vx = 10
     , vy = 0
     }
 
-
 ( gameWidth, gameHeight ) =
     ( 600, 400 )
-
 
 initialGame : Game
 initialGame =

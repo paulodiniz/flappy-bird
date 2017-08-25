@@ -1,19 +1,61 @@
-var _user$project$Update$checkCollisions = function (game) {
+var _user$project$Update$isColiding = F2(
+	function (bird, pipe) {
+		var upPipe = pipe.y + (pipe.height / 2);
+		var rightPipe = pipe.x + (pipe.width / 2);
+		var leftPipe = pipe.x - (pipe.width / 2);
+		var birdHeight = 35;
+		var downBird = bird.y - (birdHeight / 2);
+		var birdWidth = 35;
+		var rightBird = bird.x + (birdWidth / 2);
+		var leftBird = bird.x - (birdWidth / 2);
+		var _p0 = pipe.direction;
+		if (_p0.ctor === 'Down') {
+			return (_elm_lang$core$Native_Utils.cmp(rightBird, leftPipe) > 0) && ((_elm_lang$core$Native_Utils.cmp(leftBird, rightPipe) < 0) && (_elm_lang$core$Native_Utils.cmp(downBird, upPipe) < 0));
+		} else {
+			return false;
+		}
+	});
+var _user$project$Update$checkPipeColision = function (game) {
+	var bird = game.bird;
+	var pipesToCheck = A2(
+		_elm_lang$core$List$filter,
+		function (pipe) {
+			return _elm_lang$core$Native_Utils.cmp(pipe.x, bird.x) > -1;
+		},
+		game.pipes);
+	var pipesColiding = A2(
+		_elm_lang$core$List$any,
+		function (pipe) {
+			return A2(_user$project$Update$isColiding, bird, pipe);
+		},
+		pipesToCheck);
+	return pipesColiding ? _elm_lang$core$Native_Utils.update(
+		game,
+		{state: _user$project$Model$GameOver}) : game;
+};
+var _user$project$Update$upperLimit = function (game) {
 	var bird = game.bird;
 	return (_elm_lang$core$Native_Utils.cmp(bird.y, 0 - (_user$project$Model$gameHeight / 2)) < 1) ? _elm_lang$core$Native_Utils.update(
 		game,
 		{state: _user$project$Model$GameOver}) : game;
 };
-var _user$project$Update$updatePipe = function (pipe) {
-	return _elm_lang$core$Native_Utils.update(
-		pipe,
-		{x: pipe.x - 10});
-};
+var _user$project$Update$updatePipe = F2(
+	function (bird, pipe) {
+		return _elm_lang$core$Native_Utils.update(
+			pipe,
+			{x: pipe.x - bird.vx});
+	});
 var _user$project$Update$updatePipes = function (game) {
+	var bird = game.bird;
 	return _elm_lang$core$Native_Utils.update(
 		game,
 		{
-			pipes: A2(_elm_lang$core$List$map, _user$project$Update$updatePipe, game.pipes)
+			pipes: A2(
+				_elm_lang$core$List$map,
+				function (pipe) {
+					return A2(_user$project$Update$updatePipe, bird, pipe);
+				},
+				game.pipes)
 		});
 };
 var _user$project$Update$jump = function (bird) {
@@ -45,13 +87,15 @@ var _user$project$Update$gravity = function (game) {
 		{bird: newBird});
 };
 var _user$project$Update$updateFlappy = function (game) {
-	return _user$project$Update$checkCollisions(
-		_user$project$Update$updatePipes(
-			_user$project$Update$physics(
-				_user$project$Update$gravity(game))));
+	return _user$project$Update$checkPipeColision(
+		_user$project$Update$upperLimit(
+			_user$project$Update$updatePipes(
+				_user$project$Update$physics(
+					_user$project$Update$gravity(game)))));
 };
 var _user$project$Update$generateNewPipe = function (game) {
-	var newPipe = {height: 40, passageSize: 200, passed: false, x: 300};
+	var downPipe = {height: 90, width: 75, x: 300, y: (0 - _user$project$Model$gameHeight) / 2, direction: _user$project$Model$Down};
+	var upPipe = {height: 90, width: 75, x: 300, y: _user$project$Model$gameHeight / 2, direction: _user$project$Model$Up};
 	return _elm_lang$core$Native_Utils.update(
 		game,
 		{
@@ -60,18 +104,22 @@ var _user$project$Update$generateNewPipe = function (game) {
 				game.pipes,
 				{
 					ctor: '::',
-					_0: newPipe,
-					_1: {ctor: '[]'}
+					_0: upPipe,
+					_1: {
+						ctor: '::',
+						_0: downPipe,
+						_1: {ctor: '[]'}
+					}
 				})
 		});
 };
 var _user$project$Update$update = F2(
 	function (msg, game) {
-		var _p0 = game.state;
-		switch (_p0.ctor) {
+		var _p1 = game.state;
+		switch (_p1.ctor) {
 			case 'Play':
-				var _p1 = msg;
-				switch (_p1.ctor) {
+				var _p2 = msg;
+				switch (_p2.ctor) {
 					case 'TimeUpdate':
 						return {
 							ctor: '_Tuple2',
@@ -96,8 +144,8 @@ var _user$project$Update$update = F2(
 						};
 				}
 			case 'Start':
-				var _p2 = msg;
-				if (_p2.ctor === 'KeyDown') {
+				var _p3 = msg;
+				if (_p3.ctor === 'KeyDown') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(

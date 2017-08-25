@@ -20,14 +20,9 @@ main =
 
 
 
--- MODEL
-
-
-
 init : ( Game, Cmd Msg )
 init =
     ( initialGame, Cmd.none )
-
 
 
 -- SUBSCRIPTIONS

@@ -1,22 +1,22 @@
 var _user$project$View$pipeToForms = function (pipe) {
-	var pipeHeight = 100;
-	var pipeWidth = 75;
+	var img = function () {
+		var _p0 = pipe.direction;
+		if (_p0.ctor === 'Up') {
+			return './src/pipe_up.png';
+		} else {
+			return './src/pipe_down.png';
+		}
+	}();
+	var pipeHeight = _elm_lang$core$Basics$round(pipe.height);
+	var pipeWidth = _elm_lang$core$Basics$round(pipe.width);
 	return {
 		ctor: '::',
 		_0: A2(
 			_evancz$elm_graphics$Collage$move,
-			{ctor: '_Tuple2', _0: pipe.x, _1: pipe.height - (_user$project$Model$gameHeight / 2)},
+			{ctor: '_Tuple2', _0: pipe.x, _1: pipe.y},
 			_evancz$elm_graphics$Collage$toForm(
-				A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, './src/pipe_down.png'))),
-		_1: {
-			ctor: '::',
-			_0: A2(
-				_evancz$elm_graphics$Collage$move,
-				{ctor: '_Tuple2', _0: pipe.x, _1: (_user$project$Model$gameHeight / 2) - pipe.height},
-				_evancz$elm_graphics$Collage$toForm(
-					A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, './src/pipe_up.png'))),
-			_1: {ctor: '[]'}
-		}
+				A3(_evancz$elm_graphics$Element$image, pipeWidth, pipeHeight, img))),
+		_1: {ctor: '[]'}
 	};
 };
 var _user$project$View$blueSky = A3(_elm_lang$core$Color$rgb, 174, 238, 238);
@@ -45,9 +45,9 @@ var _user$project$View$view = function (game) {
 		_elm_lang$core$List$append,
 		backgroundForms,
 		A2(_elm_lang$core$List$append, birdForm, pipesForms));
-	var _p0 = game.windowDimensions;
-	var w = _p0._0;
-	var h = _p0._1;
+	var _p1 = game.windowDimensions;
+	var w = _p1._0;
+	var h = _p1._1;
 	return _evancz$elm_graphics$Element$toHtml(
 		A4(
 			_evancz$elm_graphics$Element$container,
