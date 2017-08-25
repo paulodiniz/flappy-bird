@@ -61,7 +61,7 @@ pipeToForms pipe =
                     "./src/pipe_up.png"
 
                 Down ->
-                    "./src/pipe_down.png"
+                    "./pipe_down.png"
     in
         [ image pipeWidth pipeHeight img
             |> toForm
