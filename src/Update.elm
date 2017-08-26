@@ -3,11 +3,15 @@ module Update exposing (..)
 import Keyboard exposing (KeyCode)
 import Time exposing (..)
 import Model exposing (..)
+import Random
+import Debug
+
 
 type Msg
     = TimeUpdate Time
     | KeyDown KeyCode
     | GeneratePipe Time
+    | NewPipe Float
 
 
 update : Msg -> Game -> ( Game, Cmd Msg )
@@ -16,14 +20,16 @@ update msg game =
         Play ->
             case msg of
                 TimeUpdate dt ->
-                    -- This is not regular
                     ( updateFlappy game, Cmd.none )
 
                 KeyDown keyCode ->
                     ( { game | bird = jump game.bird }, Cmd.none )
 
-                GeneratePipe _ ->
-                    ( generateNewPipe game, Cmd.none )
+                GeneratePipe time ->
+                    ( game, Random.generate NewPipe (Random.float 100 300) )
+
+                NewPipe height ->
+                    ( generateNewPipe game height, Cmd.none )
 
         Start ->
             case msg of
@@ -37,11 +43,17 @@ update msg game =
             ( game, Cmd.none )
 
 
-generateNewPipe : Game -> Game
-generateNewPipe game =
+generateNewPipe : Game -> Float -> Game
+generateNewPipe game height =
     let
+        bottomHeight =
+            height
+
+        upHeight =
+            400 - bottomHeight + 200
+
         upPipe =
-            { height = 300
+            { height = upHeight
             , width = 75
             , x = 300
             , y = gameHeight / 2
@@ -49,7 +61,7 @@ generateNewPipe game =
             }
 
         downPipe =
-            { height = 300
+            { height = bottomHeight
             , width = 75
             , x = 300
             , y = -gameHeight / 2
@@ -109,7 +121,7 @@ gravityValue =
 
 jump : Bird -> Bird
 jump bird =
-    { bird | vy = 8 }
+    { bird | vy = 6 }
 
 
 updatePipes : Game -> Game
@@ -166,10 +178,16 @@ isColiding bird pipe =
             35
 
         rightBird =
-            bird.x + birdWidth / 2
+            bird.x + birdWidth / 2 - 10
 
         leftBird =
-            bird.x - birdWidth / 2
+            bird.x - birdWidth / 2 + 10
+
+        upBird =
+            bird.y + birdHeight / 2
+
+        downBird =
+            bird.y - birdHeight / 2 + 17
 
         leftPipe =
             pipe.x - pipe.width / 2
@@ -182,20 +200,9 @@ isColiding bird pipe =
 
         downPipe =
             pipe.y - pipe.height / 2
-
-        upBird =
-            bird.y + birdHeight / 2
-
-        downBird =
-            bird.y - birdHeight / 2
-
     in
-        case pipe.direction of
-            Down ->
-                (rightBird > leftPipe) && (leftBird < rightPipe) && (downBird < upPipe) && (upBird > downPipe)
-            Up ->
-                (rightBird > leftPipe) && (leftBird < rightPipe) && (upBird > downPipe) && (upBird > downPipe)
-
-
-
-
+        not <|
+            (leftPipe > rightBird)
+                || (rightPipe < leftBird)
+                || (upPipe < downBird)
+                || (downPipe > upBird)
