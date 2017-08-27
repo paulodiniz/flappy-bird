@@ -38,9 +38,12 @@ var _user$project$Update$upperLimit = function (game) {
 };
 var _user$project$Update$updatePipe = F2(
 	function (bird, pipe) {
+		var birdWidth = 35;
+		var leftBird = (bird.x - (birdWidth / 2)) + 10;
+		var passed = (_elm_lang$core$Native_Utils.cmp(leftBird, pipe.x + pipe.width) > -1) ? true : false;
 		return _elm_lang$core$Native_Utils.update(
 			pipe,
-			{x: pipe.x - bird.vx});
+			{x: pipe.x - bird.vx, passed: passed});
 	});
 var _user$project$Update$updatePipes = function (game) {
 	var bird = game.bird;
@@ -83,19 +86,35 @@ var _user$project$Update$gravity = function (game) {
 		game,
 		{bird: newBird});
 };
+var _user$project$Update$updateScore = function (game) {
+	var score = function (x) {
+		return (x / 2) | 0;
+	}(
+		_elm_lang$core$List$length(
+			A2(
+				_elm_lang$core$List$filter,
+				function (pipe) {
+					return _elm_lang$core$Native_Utils.eq(pipe.passed, true);
+				},
+				game.pipes)));
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{score: score});
+};
 var _user$project$Update$updateFlappy = function (game) {
-	return _user$project$Update$checkPipeColision(
-		_user$project$Update$upperLimit(
-			_user$project$Update$updatePipes(
-				_user$project$Update$physics(
-					_user$project$Update$gravity(game)))));
+	return _user$project$Update$updateScore(
+		_user$project$Update$updatePipes(
+			_user$project$Update$checkPipeColision(
+				_user$project$Update$upperLimit(
+					_user$project$Update$physics(
+						_user$project$Update$gravity(game))))));
 };
 var _user$project$Update$generateNewPipe = F2(
 	function (game, height) {
 		var bottomHeight = height;
 		var upHeight = (400 - bottomHeight) + 200;
-		var upPipe = {height: upHeight, width: 75, x: 300, y: _user$project$Model$gameHeight / 2, direction: _user$project$Model$Up};
-		var downPipe = {height: bottomHeight, width: 75, x: 300, y: (0 - _user$project$Model$gameHeight) / 2, direction: _user$project$Model$Down};
+		var upPipe = {height: upHeight, width: 75, x: 300, y: _user$project$Model$gameHeight / 2, direction: _user$project$Model$Up, passed: false};
+		var downPipe = {height: bottomHeight, width: 75, x: 300, y: (0 - _user$project$Model$gameHeight) / 2, direction: _user$project$Model$Down, passed: false};
 		return _elm_lang$core$Native_Utils.update(
 			game,
 			{
@@ -146,7 +165,7 @@ var _user$project$Update$update = F2(
 							_1: A2(
 								_elm_lang$core$Random$generate,
 								_user$project$Update$NewPipe,
-								A2(_elm_lang$core$Random$float, 100, 300))
+								A2(_elm_lang$core$Random$float, 50, 400))
 						};
 					default:
 						return {

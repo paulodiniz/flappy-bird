@@ -6,6 +6,7 @@ type alias Game =
     , pipes : List Pipe
     , windowDimensions : ( Int, Int )
     , state : GameState
+    , score : Int
     }
 
 
@@ -23,6 +24,7 @@ type alias Pipe =
     , x : Float
     , y : Float
     , direction: Direction
+    , passed : Bool
     }
 
 type Direction = Up | Down
@@ -50,4 +52,5 @@ initialGame =
     , pipes = []
     , windowDimensions = ( gameWidth, gameHeight )
     , state = Start
+    , score = 0
     }

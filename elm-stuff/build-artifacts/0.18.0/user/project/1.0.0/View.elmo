@@ -21,6 +21,24 @@ var _user$project$View$pipeToForms = function (pipe) {
 };
 var _user$project$View$blueSky = A3(_elm_lang$core$Color$rgb, 174, 238, 238);
 var _user$project$View$view = function (game) {
+	var scoreForm = A2(
+		_evancz$elm_graphics$Collage$move,
+		{ctor: '_Tuple2', _0: 0, _1: (_user$project$Model$gameHeight / 2) - 50},
+		_evancz$elm_graphics$Collage$text(
+			_evancz$elm_graphics$Text$bold(
+				A2(
+					_evancz$elm_graphics$Text$color,
+					A3(_elm_lang$core$Color$rgb, 50, 160, 50),
+					A2(
+						_evancz$elm_graphics$Text$height,
+						50,
+						_evancz$elm_graphics$Text$fromString(
+							_elm_lang$core$Basics$toString(game.score)))))));
+	var textForms = {
+		ctor: '::',
+		_0: scoreForm,
+		_1: {ctor: '[]'}
+	};
 	var backgroundForms = {
 		ctor: '::',
 		_0: A2(
@@ -44,7 +62,10 @@ var _user$project$View$view = function (game) {
 	var formList = A2(
 		_elm_lang$core$List$append,
 		backgroundForms,
-		A2(_elm_lang$core$List$append, birdForm, pipesForms));
+		A2(
+			_elm_lang$core$List$append,
+			birdForm,
+			A2(_elm_lang$core$List$append, pipesForms, textForms)));
 	var _p1 = game.windowDimensions;
 	var w = _p1._0;
 	var h = _p1._1;

@@ -4,7 +4,6 @@ import Keyboard exposing (KeyCode)
 import Time exposing (..)
 import Model exposing (..)
 import Random
-import Debug
 
 
 type Msg
@@ -25,8 +24,8 @@ update msg game =
                 KeyDown keyCode ->
                     ( { game | bird = jump game.bird }, Cmd.none )
 
-                GeneratePipe time ->
-                    ( game, Random.generate NewPipe (Random.float 100 300) )
+                GeneratePipe _ ->
+                    ( game, Random.generate NewPipe (Random.float 50 400) )
 
                 NewPipe height ->
                     ( generateNewPipe game height, Cmd.none )
@@ -58,6 +57,7 @@ generateNewPipe game height =
             , x = 300
             , y = gameHeight / 2
             , direction = Up
+            , passed = False
             }
 
         downPipe =
@@ -66,6 +66,7 @@ generateNewPipe game height =
             , x = 300
             , y = -gameHeight / 2
             , direction = Down
+            , passed = False
             }
     in
         { game | pipes = List.append game.pipes [ upPipe, downPipe ] }
@@ -76,9 +77,21 @@ updateFlappy game =
     game
         |> gravity
         |> physics
-        |> updatePipes
         |> upperLimit
         |> checkPipeColision
+        |> updatePipes
+        |> updateScore
+
+
+updateScore : Game -> Game
+updateScore game =
+    let
+        score =
+            List.filter (\pipe -> pipe.passed == True) game.pipes
+                |> List.length
+                |> (\x -> x // 2)
+    in
+        { game | score = score }
 
 
 gravity : Game -> Game
@@ -135,7 +148,20 @@ updatePipes game =
 
 updatePipe : Bird -> Pipe -> Pipe
 updatePipe bird pipe =
-    { pipe | x = pipe.x - bird.vx }
+    let
+        birdWidth =
+            35
+
+        leftBird =
+            bird.x - birdWidth / 2 + 10
+
+        passed =
+            if (leftBird >= (pipe.x + pipe.width)) then
+                True
+            else
+                False
+    in
+        { pipe | x = pipe.x - bird.vx, passed = passed }
 
 
 upperLimit : Game -> Game
