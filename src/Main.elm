@@ -41,6 +41,8 @@ init =
             , player = Anonymous
             , showDialog = True
             , phxSocket = initSocket
+            , name = Nothing
+            , uid = Nothing
             }
     in
       ( initialGame , Cmd.map PhoenixMsg phxCmd )

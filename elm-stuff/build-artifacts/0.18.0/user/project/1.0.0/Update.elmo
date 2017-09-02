@@ -132,6 +132,17 @@ var _user$project$Update$generateNewPipe = F2(
 					})
 			});
 	});
+var _user$project$Update$joiningDecoder = A3(
+	_elm_lang$core$Json_Decode$map2,
+	F2(
+		function (v0, v1) {
+			return {ctor: '_Tuple2', _0: v0, _1: v1};
+		}),
+	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'uid', _elm_lang$core$Json_Decode$string));
+var _user$project$Update$decodeJoiningGame = function (raw) {
+	return A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Update$joiningDecoder, raw);
+};
 var _user$project$Update$update = F2(
 	function (msg, game) {
 		update:
@@ -204,18 +215,33 @@ var _user$project$Update$update = F2(
 								_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Msg$PhoenixMsg, phxCmd)
 							};
 						default:
-							var _p5 = A2(_elm_lang$core$Debug$log, 'Raw ', _p1._0);
-							return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+							var decodedValue = _user$project$Update$decodeJoiningGame(_p1._0);
+							var _p5 = A2(_elm_lang$core$Debug$log, 'Decoded Value ', decodedValue);
+							var _p6 = decodedValue;
+							if (_p6.ctor === 'Ok') {
+								return {
+									ctor: '_Tuple2',
+									_0: _elm_lang$core$Native_Utils.update(
+										game,
+										{
+											name: _elm_lang$core$Maybe$Just(_p6._0._0),
+											uid: _elm_lang$core$Maybe$Just(_p6._0._1)
+										}),
+									_1: _elm_lang$core$Platform_Cmd$none
+								};
+							} else {
+								return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+							}
 					}
 				case 'Start':
-					var _p6 = msg;
-					if (_p6.ctor === 'KeyDown') {
-						var _v3 = _user$project$Msg$JoinGame,
-							_v4 = _elm_lang$core$Native_Utils.update(
+					var _p7 = msg;
+					if (_p7.ctor === 'KeyDown') {
+						var _v4 = _user$project$Msg$JoinGame,
+							_v5 = _elm_lang$core$Native_Utils.update(
 							game,
 							{state: _user$project$Model$Play});
-						msg = _v3;
-						game = _v4;
+						msg = _v4;
+						game = _v5;
 						continue update;
 					} else {
 						return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};

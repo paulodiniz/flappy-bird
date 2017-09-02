@@ -1,7 +1,7 @@
 module Update exposing (..)
 
-import Keyboard exposing (KeyCode)
-import Time exposing (..)
+-- import Keyboard exposing (KeyCode)
+-- import Time exposing (..)
 import Model exposing (..)
 import Msg exposing (..)
 import Phoenix.Socket
@@ -53,9 +53,14 @@ update msg game =
                         )
                 JoinedGame raw ->
                     let
-                      _ = Debug.log "Raw " raw
+                        decodedValue = decodeJoiningGame raw
+                        _ = Debug.log "Decoded Value " decodedValue
                     in
-                      (game, Cmd.none)
+                        case decodedValue of
+                            Ok (name, uid) ->
+                                ({game | name = Just name, uid = Just uid}, Cmd.none)
+                            Err error ->
+                                (game, Cmd.none)
         Start ->
             case msg of
                 KeyDown keyCode ->
@@ -67,9 +72,16 @@ update msg game =
             ( game, Cmd.none )
 
 
--- startGame : Game -> (Game, Cmd Msg)
--- startGame game =
---     ({ game | state = Play}, Cmd.none)
+decodeJoiningGame : JD.Value -> Result String ( String, String )
+decodeJoiningGame raw =
+    JD.decodeValue joiningDecoder raw
+
+joiningDecoder : JD.Decoder (String, String)
+joiningDecoder =
+    JD.map2 (,)
+          (JD.field "name" JD.string)
+          (JD.field "uid" JD.string)
+
 generateNewPipe : Game -> Float -> Game
 generateNewPipe game height =
     let

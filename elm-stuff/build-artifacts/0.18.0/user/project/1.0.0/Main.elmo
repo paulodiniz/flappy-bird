@@ -45,7 +45,9 @@ var _user$project$Main$init = function () {
 		score: 0,
 		player: _user$project$Model$Anonymous,
 		showDialog: true,
-		phxSocket: initSocket
+		phxSocket: initSocket,
+		name: _elm_lang$core$Maybe$Nothing,
+		uid: _elm_lang$core$Maybe$Nothing
 	};
 	return {
 		ctor: '_Tuple2',

@@ -15,6 +15,8 @@ type alias Game =
     , player : Player
     , showDialog : Bool
     , phxSocket : Phoenix.Socket.Socket Msg
+    , name : Maybe String
+    , uid : Maybe String
     }
 
 
