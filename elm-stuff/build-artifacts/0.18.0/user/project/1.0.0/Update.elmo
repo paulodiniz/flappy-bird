@@ -86,29 +86,6 @@ var _user$project$Update$gravity = function (game) {
 		game,
 		{bird: newBird});
 };
-var _user$project$Update$updateScore = function (game) {
-	var score = function (x) {
-		return (x / 2) | 0;
-	}(
-		_elm_lang$core$List$length(
-			A2(
-				_elm_lang$core$List$filter,
-				function (pipe) {
-					return _elm_lang$core$Native_Utils.eq(pipe.passed, true);
-				},
-				game.pipes)));
-	return _elm_lang$core$Native_Utils.update(
-		game,
-		{score: score});
-};
-var _user$project$Update$updateFlappy = function (game) {
-	return _user$project$Update$updateScore(
-		_user$project$Update$updatePipes(
-			_user$project$Update$checkPipeColision(
-				_user$project$Update$upperLimit(
-					_user$project$Update$physics(
-						_user$project$Update$gravity(game))))));
-};
 var _user$project$Update$generateNewPipe = F2(
 	function (game, height) {
 		var bottomHeight = height;
@@ -132,6 +109,34 @@ var _user$project$Update$generateNewPipe = F2(
 					})
 			});
 	});
+var _user$project$Update$scorePayload = function (game) {
+	var uid = function () {
+		var _p0 = game.uid;
+		if (_p0.ctor === 'Nothing') {
+			return '';
+		} else {
+			return _p0._0;
+		}
+	}();
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'uid',
+				_1: _elm_lang$core$Json_Encode$string(uid)
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'score',
+					_1: _elm_lang$core$Json_Encode$int(game.score)
+				},
+				_1: {ctor: '[]'}
+			}
+		});
+};
 var _user$project$Update$joiningDecoder = A3(
 	_elm_lang$core$Json_Decode$map2,
 	F2(
@@ -147,21 +152,43 @@ var _user$project$Update$update = F2(
 	function (msg, game) {
 		update:
 		while (true) {
-			var _p0 = game.state;
-			switch (_p0.ctor) {
+			var _p1 = game.state;
+			switch (_p1.ctor) {
 				case 'Play':
-					var _p1 = msg;
-					switch (_p1.ctor) {
-						case 'UpdateTopPlayers':
-							var someMessage = A2(_elm_lang$core$Json_Decode$field, 'message', _elm_lang$core$Json_Decode$string);
-							var _p2 = A2(_elm_lang$core$Debug$log, 'Message is ', someMessage);
-							return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
-						case 'TimeUpdate':
+					var _p2 = msg;
+					switch (_p2.ctor) {
+						case 'AskForTopPlayers':
+							var phxPush = A2(
+								_fbonetti$elm_phoenix_socket$Phoenix_Push$withPayload,
+								_user$project$Update$scorePayload(game),
+								A2(_fbonetti$elm_phoenix_socket$Phoenix_Push$init, 'top_players', 'game:lobby'));
+							var _p3 = A2(_fbonetti$elm_phoenix_socket$Phoenix_Socket$push, phxPush, game.phxSocket);
+							var phxSocket = _p3._0;
+							var phxCmd = _p3._1;
 							return {
 								ctor: '_Tuple2',
-								_0: _user$project$Update$updateFlappy(game),
-								_1: _elm_lang$core$Platform_Cmd$none
+								_0: _elm_lang$core$Native_Utils.update(
+									game,
+									{phxSocket: phxSocket}),
+								_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Msg$PhoenixMsg, phxCmd)
 							};
+						case 'SendScore':
+							var phxPush = A2(
+								_fbonetti$elm_phoenix_socket$Phoenix_Push$withPayload,
+								_user$project$Update$scorePayload(game),
+								A2(_fbonetti$elm_phoenix_socket$Phoenix_Push$init, 'update_score', 'game:lobby'));
+							var _p4 = A2(_fbonetti$elm_phoenix_socket$Phoenix_Socket$push, phxPush, game.phxSocket);
+							var phxSocket = _p4._0;
+							var phxCmd = _p4._1;
+							return {
+								ctor: '_Tuple2',
+								_0: _elm_lang$core$Native_Utils.update(
+									game,
+									{phxSocket: phxSocket}),
+								_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Msg$PhoenixMsg, phxCmd)
+							};
+						case 'TimeUpdate':
+							return _user$project$Update$updateFlappy(game);
 						case 'KeyDown':
 							return {
 								ctor: '_Tuple2',
@@ -184,7 +211,7 @@ var _user$project$Update$update = F2(
 						case 'NewPipe':
 							return {
 								ctor: '_Tuple2',
-								_0: A2(_user$project$Update$generateNewPipe, game, _p1._0),
+								_0: A2(_user$project$Update$generateNewPipe, game, _p2._0),
 								_1: _elm_lang$core$Platform_Cmd$none
 							};
 						case 'JoinGame':
@@ -193,9 +220,9 @@ var _user$project$Update$update = F2(
 								_elm_lang$core$Json_Encode$object(
 									{ctor: '[]'}),
 								A2(_fbonetti$elm_phoenix_socket$Phoenix_Push$init, 'join_game', 'game:lobby'));
-							var _p3 = A2(_fbonetti$elm_phoenix_socket$Phoenix_Socket$push, phxPush, game.phxSocket);
-							var phxSocket = _p3._0;
-							var phxCmd = _p3._1;
+							var _p5 = A2(_fbonetti$elm_phoenix_socket$Phoenix_Socket$push, phxPush, game.phxSocket);
+							var phxSocket = _p5._0;
+							var phxCmd = _p5._1;
 							return {
 								ctor: '_Tuple2',
 								_0: _elm_lang$core$Native_Utils.update(
@@ -204,9 +231,9 @@ var _user$project$Update$update = F2(
 								_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Msg$PhoenixMsg, phxCmd)
 							};
 						case 'PhoenixMsg':
-							var _p4 = A2(_fbonetti$elm_phoenix_socket$Phoenix_Socket$update, _p1._0, game.phxSocket);
-							var phxSocket = _p4._0;
-							var phxCmd = _p4._1;
+							var _p6 = A2(_fbonetti$elm_phoenix_socket$Phoenix_Socket$update, _p2._0, game.phxSocket);
+							var phxSocket = _p6._0;
+							var phxCmd = _p6._1;
 							return {
 								ctor: '_Tuple2',
 								_0: _elm_lang$core$Native_Utils.update(
@@ -214,34 +241,35 @@ var _user$project$Update$update = F2(
 									{phxSocket: phxSocket}),
 								_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Msg$PhoenixMsg, phxCmd)
 							};
-						default:
-							var decodedValue = _user$project$Update$decodeJoiningGame(_p1._0);
-							var _p5 = A2(_elm_lang$core$Debug$log, 'Decoded Value ', decodedValue);
-							var _p6 = decodedValue;
-							if (_p6.ctor === 'Ok') {
+						case 'JoinedGame':
+							var _p7 = _user$project$Update$decodeJoiningGame(_p2._0);
+							if (_p7.ctor === 'Ok') {
 								return {
 									ctor: '_Tuple2',
 									_0: _elm_lang$core$Native_Utils.update(
 										game,
 										{
-											name: _elm_lang$core$Maybe$Just(_p6._0._0),
-											uid: _elm_lang$core$Maybe$Just(_p6._0._1)
+											name: _elm_lang$core$Maybe$Just(_p7._0._0),
+											uid: _elm_lang$core$Maybe$Just(_p7._0._1)
 										}),
 									_1: _elm_lang$core$Platform_Cmd$none
 								};
 							} else {
 								return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
 							}
+						default:
+							var _p8 = A2(_elm_lang$core$Debug$log, 'Update top players', _p2._0);
+							return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
 					}
 				case 'Start':
-					var _p7 = msg;
-					if (_p7.ctor === 'KeyDown') {
-						var _v4 = _user$project$Msg$JoinGame,
-							_v5 = _elm_lang$core$Native_Utils.update(
+					var _p9 = msg;
+					if (_p9.ctor === 'KeyDown') {
+						var _v5 = _user$project$Msg$JoinGame,
+							_v6 = _elm_lang$core$Native_Utils.update(
 							game,
 							{state: _user$project$Model$Play});
-						msg = _v4;
-						game = _v5;
+						msg = _v5;
+						game = _v6;
 						continue update;
 					} else {
 						return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
@@ -251,3 +279,29 @@ var _user$project$Update$update = F2(
 			}
 		}
 	});
+var _user$project$Update$updateFlappy = function (game) {
+	return _user$project$Update$updateScore(
+		_user$project$Update$updatePipes(
+			_user$project$Update$checkPipeColision(
+				_user$project$Update$upperLimit(
+					_user$project$Update$physics(
+						_user$project$Update$gravity(game))))));
+};
+var _user$project$Update$updateScore = function (game) {
+	var score = function (x) {
+		return (x / 2) | 0;
+	}(
+		_elm_lang$core$List$length(
+			A2(
+				_elm_lang$core$List$filter,
+				function (pipe) {
+					return _elm_lang$core$Native_Utils.eq(pipe.passed, true);
+				},
+				game.pipes)));
+	return _elm_lang$core$Native_Utils.eq(game.score, score) ? {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none} : A2(
+		_user$project$Update$update,
+		_user$project$Msg$SendScore,
+		_elm_lang$core$Native_Utils.update(
+			game,
+			{score: score}));
+};

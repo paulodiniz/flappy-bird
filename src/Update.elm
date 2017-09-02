@@ -16,10 +16,25 @@ update msg game =
     case game.state of
         Play ->
             case msg of
-                SendScore dt ->
-                    (game, Cmd.none)
+                AskForTopPlayers _ ->
+                    let
+                        phxPush =
+                            Phoenix.Push.init "top_players" "game:lobby"
+                                |> Phoenix.Push.withPayload (scorePayload game)
+                        (phxSocket, phxCmd) = Phoenix.Socket.push phxPush game.phxSocket
+                    in
+                        ({game | phxSocket = phxSocket}, Cmd.map PhoenixMsg phxCmd)
+
+                SendScore ->
+                    let
+                        phxPush =
+                            Phoenix.Push.init "update_score" "game:lobby"
+                                |> Phoenix.Push.withPayload (scorePayload game)
+                        (phxSocket, phxCmd) = Phoenix.Socket.push phxPush game.phxSocket
+                    in
+                        ({game | phxSocket = phxSocket}, Cmd.map PhoenixMsg phxCmd)
                 TimeUpdate dt ->
-                    ( updateFlappy game, Cmd.none )
+                    updateFlappy game
 
                 KeyDown keyCode ->
                     ( { game | bird = jump game.bird }, Cmd.none )
@@ -52,6 +67,12 @@ update msg game =
                             ({game | name = Just name, uid = Just uid}, Cmd.none)
                         Err error ->
                             (game, Cmd.none)
+                UpdateTopPlayers raw ->
+                    let
+                        _ = Debug.log "Update top players" raw
+                    in
+                      (game, Cmd.none)
+
         Start ->
             case msg of
                 KeyDown keyCode ->
@@ -72,6 +93,18 @@ joiningDecoder =
     JD.map2 (,)
           (JD.field "name" JD.string)
           (JD.field "uid" JD.string)
+
+scorePayload : Game -> JE.Value
+scorePayload game =
+    let
+        uid = case game.uid of
+                  Nothing ->
+                      ""
+                  Just val ->
+                      val
+    in
+      JE.object [("uid", JE.string uid), ("score", JE.int game.score )]
+
 
 generateNewPipe : Game -> Float -> Game
 generateNewPipe game height =
@@ -103,7 +136,7 @@ generateNewPipe game height =
         { game | pipes = List.append game.pipes [ upPipe, downPipe ] }
 
 
-updateFlappy : Game -> Game
+updateFlappy : Game -> (Game, Cmd Msg)
 updateFlappy game =
     game
         |> gravity
@@ -114,7 +147,7 @@ updateFlappy game =
         |> updateScore
 
 
-updateScore : Game -> Game
+updateScore : Game -> (Game, Cmd Msg)
 updateScore game =
     let
         score =
@@ -122,7 +155,10 @@ updateScore game =
                 |> List.length
                 |> (\x -> x // 2)
     in
-        { game | score = score }
+        if (game.score == score) then
+            (game, Cmd.none)
+        else
+            { game | score = score } |> update SendScore
 
 
 gravity : Game -> Game

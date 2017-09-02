@@ -12,7 +12,11 @@ var _user$project$Main$subscriptions = function (model) {
 					_1: {
 						ctor: '::',
 						_0: A2(_fbonetti$elm_phoenix_socket$Phoenix_Socket$listen, model.phxSocket, _user$project$Msg$PhoenixMsg),
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _user$project$Msg$AskForTopPlayers),
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			}
@@ -44,7 +48,6 @@ var _user$project$Main$init = function () {
 		state: _user$project$Model$Start,
 		score: 0,
 		player: _user$project$Model$Anonymous,
-		showDialog: true,
 		phxSocket: initSocket,
 		name: _elm_lang$core$Maybe$Nothing,
 		uid: _elm_lang$core$Maybe$Nothing

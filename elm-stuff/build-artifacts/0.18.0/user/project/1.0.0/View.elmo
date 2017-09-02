@@ -20,16 +20,6 @@ var _user$project$View$pipeToForms = function (pipe) {
 	};
 };
 var _user$project$View$blueSky = A3(_elm_lang$core$Color$rgb, 174, 238, 238);
-var _user$project$View$dialogConfig = function (game) {
-	return {
-		containerClass: _elm_lang$core$Maybe$Nothing,
-		closeMessage: _elm_lang$core$Maybe$Nothing,
-		header: _elm_lang$core$Maybe$Nothing,
-		body: _elm_lang$core$Maybe$Just(
-			_elm_lang$html$Html$text('The counter ticks up to ')),
-		footer: _elm_lang$core$Maybe$Nothing
-	};
-};
 var _user$project$View$playersList = A2(
 	_elm_lang$html$Html$ul,
 	{ctor: '[]'},

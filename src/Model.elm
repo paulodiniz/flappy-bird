@@ -1,6 +1,5 @@
 module Model exposing (..)
 
-
 import Phoenix.Socket
 import Phoenix.Channel
 import Phoenix.Push
@@ -13,7 +12,6 @@ type alias Game =
     , state : GameState
     , score : Int
     , player : Player
-    , showDialog : Bool
     , phxSocket : Phoenix.Socket.Socket Msg
     , name : Maybe String
     , uid : Maybe String

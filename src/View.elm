@@ -69,16 +69,6 @@ playersList =
     Html.ul [] (List.map (\s -> Html.li [] [ Html.text s ]) [ "My", "players", "List" ])
 
 
-dialogConfig : Game -> Dialog.Config Msg
-dialogConfig game =
-    { containerClass = Nothing
-    , closeMessage = Nothing
-    , header = Nothing
-    , body = Just (Html.text ("The counter ticks up to "))
-    , footer = Nothing
-    }
-
-
 blueSky : Color
 blueSky =
     rgb 174 238 238

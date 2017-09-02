@@ -13,4 +13,6 @@ type Msg
     | JoinGame
     | JoinedGame Json.Encode.Value
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
-    | SendScore Time
+    | SendScore
+    | AskForTopPlayers Time
+    | UpdateTopPlayers Json.Encode.Value

@@ -3,27 +3,10 @@ var _user$project$Model$gameWidth = _user$project$Model$_p0._0;
 var _user$project$Model$gameHeight = _user$project$Model$_p0._1;
 var _user$project$Model$socketServer = 'ws://localhost:4000/socket/websocket';
 var _user$project$Model$initialBird = {x: -150, y: 20, vx: 2, vy: 0};
-var _user$project$Model$Game = function (a) {
-	return function (b) {
-		return function (c) {
-			return function (d) {
-				return function (e) {
-					return function (f) {
-						return function (g) {
-							return function (h) {
-								return function (i) {
-									return function (j) {
-										return {bird: a, pipes: b, windowDimensions: c, state: d, score: e, player: f, showDialog: g, phxSocket: h, name: i, uid: j};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
-};
+var _user$project$Model$Game = F9(
+	function (a, b, c, d, e, f, g, h, i) {
+		return {bird: a, pipes: b, windowDimensions: c, state: d, score: e, player: f, phxSocket: g, name: h, uid: i};
+	});
 var _user$project$Model$Bird = F4(
 	function (a, b, c, d) {
 		return {x: a, y: b, vx: c, vy: d};
