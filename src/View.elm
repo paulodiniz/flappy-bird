@@ -1,11 +1,18 @@
 module View exposing (view)
 
 import Html exposing (Html)
+
+
+-- import Html.Attributes exposing (..)
+-- import Html.Events exposing (..)
+
 import Element exposing (..)
 import Collage exposing (..)
 import Color exposing (..)
 import Model exposing (..)
 import Text
+import Dialog
+import Msg exposing (..)
 
 
 view : Game -> Html msg
@@ -34,11 +41,11 @@ view game =
 
         scoreForm =
             Text.fromString (toString game.score)
-            |> (Text.height 50)
-            |> Text.color (Color.rgb 50 160 50)
-            |> Text.bold
-            |> text
-            |> move(0, gameHeight/2 - 50)
+                |> (Text.height 50)
+                |> Text.color (Color.rgb 50 160 50)
+                |> Text.bold
+                |> text
+                |> move ( 0, gameHeight / 2 - 50 )
 
         textForms =
             [ scoreForm ]
@@ -49,9 +56,27 @@ view game =
                     List.append pipesForms <|
                         textForms
     in
-        toHtml <|
-            container w h middle <|
-                collage gameWidth gameHeight formList
+        Html.div []
+            [ toHtml <|
+                container w h middle <|
+                    collage gameWidth gameHeight formList
+            , playersList
+            ]
+
+
+playersList : Html msg
+playersList =
+    Html.ul [] (List.map (\s -> Html.li [] [ Html.text s ]) [ "My", "players", "List" ])
+
+
+dialogConfig : Game -> Dialog.Config Msg
+dialogConfig game =
+    { containerClass = Nothing
+    , closeMessage = Nothing
+    , header = Nothing
+    , body = Just (Html.text ("The counter ticks up to "))
+    , footer = Nothing
+    }
 
 
 blueSky : Color

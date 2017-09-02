@@ -1,0 +1,48 @@
+var _krisajenkins$elm_exts$Exts_Tuple$onSecond = F2(
+	function (f, _p0) {
+		var _p1 = _p0;
+		var _p2 = _p1._0;
+		return {
+			ctor: '_Tuple2',
+			_0: _p2,
+			_1: A2(f, _p2, _p1._1)
+		};
+	});
+var _krisajenkins$elm_exts$Exts_Tuple$onFirst = F2(
+	function (f, _p3) {
+		var _p4 = _p3;
+		var _p5 = _p4._1;
+		return {
+			ctor: '_Tuple2',
+			_0: A2(f, _p4._0, _p5),
+			_1: _p5
+		};
+	});
+var _krisajenkins$elm_exts$Exts_Tuple$fork = F3(
+	function (fX, fY, v) {
+		return {
+			ctor: '_Tuple2',
+			_0: fX(v),
+			_1: fY(v)
+		};
+	});
+var _krisajenkins$elm_exts$Exts_Tuple$pair = F3(
+	function (f1, f2, _p6) {
+		var _p7 = _p6;
+		return {
+			ctor: '_Tuple2',
+			_0: f1(_p7._0),
+			_1: f2(_p7._1)
+		};
+	});
+var _krisajenkins$elm_exts$Exts_Tuple$both = function (f) {
+	return A2(_krisajenkins$elm_exts$Exts_Tuple$pair, f, f);
+};
+var _krisajenkins$elm_exts$Exts_Tuple$indexedPair = F2(
+	function (f, x) {
+		return {
+			ctor: '_Tuple2',
+			_0: f(x),
+			_1: x
+		};
+	});

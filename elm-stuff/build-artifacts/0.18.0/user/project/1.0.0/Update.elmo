@@ -132,9 +132,6 @@ var _user$project$Update$generateNewPipe = F2(
 					})
 			});
 	});
-var _user$project$Update$NewPipe = function (a) {
-	return {ctor: 'NewPipe', _0: a};
-};
 var _user$project$Update$update = F2(
 	function (msg, game) {
 		var _p0 = game.state;
@@ -164,19 +161,30 @@ var _user$project$Update$update = F2(
 							_0: game,
 							_1: A2(
 								_elm_lang$core$Random$generate,
-								_user$project$Update$NewPipe,
+								_user$project$Msg$NewPipe,
 								A2(_elm_lang$core$Random$float, 50, 400))
 						};
-					default:
+					case 'NewPipe':
 						return {
 							ctor: '_Tuple2',
 							_0: A2(_user$project$Update$generateNewPipe, game, _p1._0),
 							_1: _elm_lang$core$Platform_Cmd$none
 						};
+					default:
+						var _p2 = A2(_fbonetti$elm_phoenix_socket$Phoenix_Socket$update, _p1._0, game.phxSocket);
+						var phxSocket = _p2._0;
+						var phxCmd = _p2._1;
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								game,
+								{phxSocket: phxSocket}),
+							_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Msg$PhoenixMsg, phxCmd)
+						};
 				}
 			case 'Start':
-				var _p2 = msg;
-				if (_p2.ctor === 'KeyDown') {
+				var _p3 = msg;
+				if (_p3.ctor === 'KeyDown') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -191,12 +199,3 @@ var _user$project$Update$update = F2(
 				return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
-var _user$project$Update$GeneratePipe = function (a) {
-	return {ctor: 'GeneratePipe', _0: a};
-};
-var _user$project$Update$KeyDown = function (a) {
-	return {ctor: 'KeyDown', _0: a};
-};
-var _user$project$Update$TimeUpdate = function (a) {
-	return {ctor: 'TimeUpdate', _0: a};
-};

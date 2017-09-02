@@ -3,15 +3,9 @@ module Update exposing (..)
 import Keyboard exposing (KeyCode)
 import Time exposing (..)
 import Model exposing (..)
+import Msg exposing (..)
+import Phoenix.Socket
 import Random
-
-
-type Msg
-    = TimeUpdate Time
-    | KeyDown KeyCode
-    | GeneratePipe Time
-    | NewPipe Float
-
 
 update : Msg -> Game -> ( Game, Cmd Msg )
 update msg game =
@@ -30,6 +24,13 @@ update msg game =
                 NewPipe height ->
                     ( generateNewPipe game height, Cmd.none )
 
+                PhoenixMsg msg ->
+                    let
+                        ( phxSocket, phxCmd ) = Phoenix.Socket.update msg game.phxSocket
+                    in
+                        ( { game | phxSocket = phxSocket }
+                        , Cmd.map PhoenixMsg phxCmd
+                        )
         Start ->
             case msg of
                 KeyDown keyCode ->

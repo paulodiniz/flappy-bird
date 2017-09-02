@@ -20,6 +20,44 @@ var _user$project$View$pipeToForms = function (pipe) {
 	};
 };
 var _user$project$View$blueSky = A3(_elm_lang$core$Color$rgb, 174, 238, 238);
+var _user$project$View$dialogConfig = function (game) {
+	return {
+		containerClass: _elm_lang$core$Maybe$Nothing,
+		closeMessage: _elm_lang$core$Maybe$Nothing,
+		header: _elm_lang$core$Maybe$Nothing,
+		body: _elm_lang$core$Maybe$Just(
+			_elm_lang$html$Html$text('The counter ticks up to ')),
+		footer: _elm_lang$core$Maybe$Nothing
+	};
+};
+var _user$project$View$playersList = A2(
+	_elm_lang$html$Html$ul,
+	{ctor: '[]'},
+	A2(
+		_elm_lang$core$List$map,
+		function (s) {
+			return A2(
+				_elm_lang$html$Html$li,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(s),
+					_1: {ctor: '[]'}
+				});
+		},
+		{
+			ctor: '::',
+			_0: 'My',
+			_1: {
+				ctor: '::',
+				_0: 'players',
+				_1: {
+					ctor: '::',
+					_0: 'List',
+					_1: {ctor: '[]'}
+				}
+			}
+		}));
 var _user$project$View$view = function (game) {
 	var scoreForm = A2(
 		_evancz$elm_graphics$Collage$move,
@@ -69,11 +107,22 @@ var _user$project$View$view = function (game) {
 	var _p1 = game.windowDimensions;
 	var w = _p1._0;
 	var h = _p1._1;
-	return _evancz$elm_graphics$Element$toHtml(
-		A4(
-			_evancz$elm_graphics$Element$container,
-			w,
-			h,
-			_evancz$elm_graphics$Element$middle,
-			A3(_evancz$elm_graphics$Collage$collage, _user$project$Model$gameWidth, _user$project$Model$gameHeight, formList)));
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _evancz$elm_graphics$Element$toHtml(
+				A4(
+					_evancz$elm_graphics$Element$container,
+					w,
+					h,
+					_evancz$elm_graphics$Element$middle,
+					A3(_evancz$elm_graphics$Collage$collage, _user$project$Model$gameWidth, _user$project$Model$gameHeight, formList))),
+			_1: {
+				ctor: '::',
+				_0: _user$project$View$playersList,
+				_1: {ctor: '[]'}
+			}
+		});
 };

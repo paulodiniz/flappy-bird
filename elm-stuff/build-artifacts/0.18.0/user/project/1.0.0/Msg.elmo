@@ -1,0 +1,15 @@
+var _user$project$Msg$PhoenixMsg = function (a) {
+	return {ctor: 'PhoenixMsg', _0: a};
+};
+var _user$project$Msg$NewPipe = function (a) {
+	return {ctor: 'NewPipe', _0: a};
+};
+var _user$project$Msg$GeneratePipe = function (a) {
+	return {ctor: 'GeneratePipe', _0: a};
+};
+var _user$project$Msg$KeyDown = function (a) {
+	return {ctor: 'KeyDown', _0: a};
+};
+var _user$project$Msg$TimeUpdate = function (a) {
+	return {ctor: 'TimeUpdate', _0: a};
+};

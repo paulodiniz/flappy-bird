@@ -8,6 +8,8 @@ import Time exposing (..)
 import View exposing (..)
 import Model exposing (..)
 import Update exposing (..)
+import Msg exposing (..)
+import Phoenix.Socket
 
 main : Program Never Game Msg
 main =
@@ -34,6 +36,7 @@ subscriptions model =
         [ AnimationFrame.diffs TimeUpdate
         , Keyboard.downs KeyDown
         , Time.every (Time.second * 2) GeneratePipe
+        , Phoenix.Socket.listen model.phxSocket PhoenixMsg
         ]
 
 
