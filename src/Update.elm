@@ -16,13 +16,8 @@ update msg game =
     case game.state of
         Play ->
             case msg of
-                UpdateTopPlayers raw ->
-                    let
-                        someMessage = JD.field "message" JD.string
-                        _ = Debug.log "Message is "someMessage
-                    in
-                        (game, Cmd.none)
-
+                SendScore dt ->
+                    (game, Cmd.none)
                 TimeUpdate dt ->
                     ( updateFlappy game, Cmd.none )
 
@@ -52,15 +47,11 @@ update msg game =
                         , Cmd.map PhoenixMsg phxCmd
                         )
                 JoinedGame raw ->
-                    let
-                        decodedValue = decodeJoiningGame raw
-                        _ = Debug.log "Decoded Value " decodedValue
-                    in
-                        case decodedValue of
-                            Ok (name, uid) ->
-                                ({game | name = Just name, uid = Just uid}, Cmd.none)
-                            Err error ->
-                                (game, Cmd.none)
+                    case (decodeJoiningGame raw) of
+                        Ok (name, uid) ->
+                            ({game | name = Just name, uid = Just uid}, Cmd.none)
+                        Err error ->
+                            (game, Cmd.none)
         Start ->
             case msg of
                 KeyDown keyCode ->

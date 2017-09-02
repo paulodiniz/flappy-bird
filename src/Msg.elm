@@ -12,5 +12,5 @@ type Msg
     | NewPipe Float
     | JoinGame
     | JoinedGame Json.Encode.Value
-    | UpdateTopPlayers Json.Encode.Value
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
+    | SendScore Time

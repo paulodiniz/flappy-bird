@@ -29,7 +29,7 @@ init =
           Phoenix.Socket.init socketServer
               |> Phoenix.Socket.withDebug
               |> Phoenix.Socket.on "joined_game" "game:lobby" JoinedGame
-              |> Phoenix.Socket.on "top_players" "game:lobby" UpdateTopPlayers
+              -- |> Phoenix.Socket.on "top_players" "game:lobby" UpdateTopPlayers
               |> Phoenix.Socket.join channel
 
         initialGame =
@@ -58,4 +58,5 @@ subscriptions model =
         , Keyboard.downs KeyDown
         , Time.every (Time.second * 2) GeneratePipe
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
+        , Time.every Time.second SendScore
         ]
