@@ -10,6 +10,7 @@ import Model exposing (..)
 import Update exposing (..)
 import Msg exposing (..)
 import Phoenix.Socket
+import Phoenix.Channel
 
 main : Program Never Game Msg
 main =
@@ -20,11 +21,29 @@ main =
         , subscriptions = subscriptions
         }
 
-
-
 init : ( Game, Cmd Msg )
 init =
-    ( initialGame, Cmd.none )
+    let
+        channel = Phoenix.Channel.init "game:lobby"
+        (initSocket, phxCmd) =
+          Phoenix.Socket.init socketServer
+              |> Phoenix.Socket.withDebug
+              |> Phoenix.Socket.on "joined_game" "game:lobby" JoinedGame
+              |> Phoenix.Socket.on "top_players" "game:lobby" UpdateTopPlayers
+              |> Phoenix.Socket.join channel
+
+        initialGame =
+            { bird = initialBird
+            , pipes = []
+            , windowDimensions = ( gameWidth, gameHeight )
+            , state = Start
+            , score = 0
+            , player = Anonymous
+            , showDialog = True
+            , phxSocket = initSocket
+            }
+    in
+      ( initialGame , Cmd.map PhoenixMsg phxCmd )
 
 
 -- SUBSCRIPTIONS
@@ -38,7 +57,3 @@ subscriptions model =
         , Time.every (Time.second * 2) GeneratePipe
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
         ]
-
-
-
-

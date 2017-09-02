@@ -134,68 +134,94 @@ var _user$project$Update$generateNewPipe = F2(
 	});
 var _user$project$Update$update = F2(
 	function (msg, game) {
-		var _p0 = game.state;
-		switch (_p0.ctor) {
-			case 'Play':
-				var _p1 = msg;
-				switch (_p1.ctor) {
-					case 'TimeUpdate':
-						return {
-							ctor: '_Tuple2',
-							_0: _user$project$Update$updateFlappy(game),
-							_1: _elm_lang$core$Platform_Cmd$none
-						};
-					case 'KeyDown':
-						return {
-							ctor: '_Tuple2',
-							_0: _elm_lang$core$Native_Utils.update(
-								game,
-								{
-									bird: _user$project$Update$jump(game.bird)
-								}),
-							_1: _elm_lang$core$Platform_Cmd$none
-						};
-					case 'GeneratePipe':
-						return {
-							ctor: '_Tuple2',
-							_0: game,
-							_1: A2(
-								_elm_lang$core$Random$generate,
-								_user$project$Msg$NewPipe,
-								A2(_elm_lang$core$Random$float, 50, 400))
-						};
-					case 'NewPipe':
-						return {
-							ctor: '_Tuple2',
-							_0: A2(_user$project$Update$generateNewPipe, game, _p1._0),
-							_1: _elm_lang$core$Platform_Cmd$none
-						};
-					default:
-						var _p2 = A2(_fbonetti$elm_phoenix_socket$Phoenix_Socket$update, _p1._0, game.phxSocket);
-						var phxSocket = _p2._0;
-						var phxCmd = _p2._1;
-						return {
-							ctor: '_Tuple2',
-							_0: _elm_lang$core$Native_Utils.update(
-								game,
-								{phxSocket: phxSocket}),
-							_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Msg$PhoenixMsg, phxCmd)
-						};
-				}
-			case 'Start':
-				var _p3 = msg;
-				if (_p3.ctor === 'KeyDown') {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
+		update:
+		while (true) {
+			var _p0 = game.state;
+			switch (_p0.ctor) {
+				case 'Play':
+					var _p1 = msg;
+					switch (_p1.ctor) {
+						case 'UpdateTopPlayers':
+							var someMessage = A2(_elm_lang$core$Json_Decode$field, 'message', _elm_lang$core$Json_Decode$string);
+							var _p2 = A2(_elm_lang$core$Debug$log, 'Message is ', someMessage);
+							return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+						case 'TimeUpdate':
+							return {
+								ctor: '_Tuple2',
+								_0: _user$project$Update$updateFlappy(game),
+								_1: _elm_lang$core$Platform_Cmd$none
+							};
+						case 'KeyDown':
+							return {
+								ctor: '_Tuple2',
+								_0: _elm_lang$core$Native_Utils.update(
+									game,
+									{
+										bird: _user$project$Update$jump(game.bird)
+									}),
+								_1: _elm_lang$core$Platform_Cmd$none
+							};
+						case 'GeneratePipe':
+							return {
+								ctor: '_Tuple2',
+								_0: game,
+								_1: A2(
+									_elm_lang$core$Random$generate,
+									_user$project$Msg$NewPipe,
+									A2(_elm_lang$core$Random$float, 50, 400))
+							};
+						case 'NewPipe':
+							return {
+								ctor: '_Tuple2',
+								_0: A2(_user$project$Update$generateNewPipe, game, _p1._0),
+								_1: _elm_lang$core$Platform_Cmd$none
+							};
+						case 'JoinGame':
+							var phxPush = A2(
+								_fbonetti$elm_phoenix_socket$Phoenix_Push$withPayload,
+								_elm_lang$core$Json_Encode$object(
+									{ctor: '[]'}),
+								A2(_fbonetti$elm_phoenix_socket$Phoenix_Push$init, 'join_game', 'game:lobby'));
+							var _p3 = A2(_fbonetti$elm_phoenix_socket$Phoenix_Socket$push, phxPush, game.phxSocket);
+							var phxSocket = _p3._0;
+							var phxCmd = _p3._1;
+							return {
+								ctor: '_Tuple2',
+								_0: _elm_lang$core$Native_Utils.update(
+									game,
+									{phxSocket: phxSocket}),
+								_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Msg$PhoenixMsg, phxCmd)
+							};
+						case 'PhoenixMsg':
+							var _p4 = A2(_fbonetti$elm_phoenix_socket$Phoenix_Socket$update, _p1._0, game.phxSocket);
+							var phxSocket = _p4._0;
+							var phxCmd = _p4._1;
+							return {
+								ctor: '_Tuple2',
+								_0: _elm_lang$core$Native_Utils.update(
+									game,
+									{phxSocket: phxSocket}),
+								_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Msg$PhoenixMsg, phxCmd)
+							};
+						default:
+							var _p5 = A2(_elm_lang$core$Debug$log, 'Raw ', _p1._0);
+							return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+					}
+				case 'Start':
+					var _p6 = msg;
+					if (_p6.ctor === 'KeyDown') {
+						var _v3 = _user$project$Msg$JoinGame,
+							_v4 = _elm_lang$core$Native_Utils.update(
 							game,
-							{state: _user$project$Model$Play}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				} else {
+							{state: _user$project$Model$Play});
+						msg = _v3;
+						game = _v4;
+						continue update;
+					} else {
+						return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+					}
+				default:
 					return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
-				}
-			default:
-				return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+			}
 		}
 	});

@@ -1,6 +1,13 @@
 var _user$project$Msg$PhoenixMsg = function (a) {
 	return {ctor: 'PhoenixMsg', _0: a};
 };
+var _user$project$Msg$UpdateTopPlayers = function (a) {
+	return {ctor: 'UpdateTopPlayers', _0: a};
+};
+var _user$project$Msg$JoinedGame = function (a) {
+	return {ctor: 'JoinedGame', _0: a};
+};
+var _user$project$Msg$JoinGame = {ctor: 'JoinGame'};
 var _user$project$Msg$NewPipe = function (a) {
 	return {ctor: 'NewPipe', _0: a};
 };

@@ -2,7 +2,7 @@ module Msg exposing (..)
 
 import Phoenix.Socket
 import Keyboard exposing (KeyCode)
-
+import Json.Encode
 import Time exposing (..)
 
 type Msg
@@ -10,4 +10,7 @@ type Msg
     | KeyDown KeyCode
     | GeneratePipe Time
     | NewPipe Float
+    | JoinGame
+    | JoinedGame Json.Encode.Value
+    | UpdateTopPlayers Json.Encode.Value
     | PhoenixMsg (Phoenix.Socket.Msg Msg)

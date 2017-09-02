@@ -5,13 +5,24 @@ import Time exposing (..)
 import Model exposing (..)
 import Msg exposing (..)
 import Phoenix.Socket
+import Phoenix.Push
 import Random
+import Debug
+import Json.Decode as JD
+import Json.Encode as JE
 
 update : Msg -> Game -> ( Game, Cmd Msg )
 update msg game =
     case game.state of
         Play ->
             case msg of
+                UpdateTopPlayers raw ->
+                    let
+                        someMessage = JD.field "message" JD.string
+                        _ = Debug.log "Message is "someMessage
+                    in
+                        (game, Cmd.none)
+
                 TimeUpdate dt ->
                     ( updateFlappy game, Cmd.none )
 
@@ -24,6 +35,15 @@ update msg game =
                 NewPipe height ->
                     ( generateNewPipe game height, Cmd.none )
 
+                JoinGame ->
+                    let
+                        phxPush =
+                            Phoenix.Push.init "join_game" "game:lobby"
+                                |> Phoenix.Push.withPayload (JE.object [])
+                        (phxSocket, phxCmd) = Phoenix.Socket.push phxPush game.phxSocket
+                    in
+                        ({game | phxSocket = phxSocket}, Cmd.map PhoenixMsg phxCmd)
+
                 PhoenixMsg msg ->
                     let
                         ( phxSocket, phxCmd ) = Phoenix.Socket.update msg game.phxSocket
@@ -31,11 +51,15 @@ update msg game =
                         ( { game | phxSocket = phxSocket }
                         , Cmd.map PhoenixMsg phxCmd
                         )
+                JoinedGame raw ->
+                    let
+                      _ = Debug.log "Raw " raw
+                    in
+                      (game, Cmd.none)
         Start ->
             case msg of
                 KeyDown keyCode ->
-                    ( { game | state = Play }, Cmd.none )
-
+                    { game | state = Play} |> update JoinGame
                 _ ->
                     ( game, Cmd.none )
 
@@ -43,6 +67,9 @@ update msg game =
             ( game, Cmd.none )
 
 
+-- startGame : Game -> (Game, Cmd Msg)
+-- startGame game =
+--     ({ game | state = Play}, Cmd.none)
 generateNewPipe : Game -> Float -> Game
 generateNewPipe game height =
     let

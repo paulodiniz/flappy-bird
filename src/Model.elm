@@ -4,7 +4,7 @@ module Model exposing (..)
 import Phoenix.Socket
 import Phoenix.Channel
 import Phoenix.Push
-import Msg
+import Msg exposing (..)
 
 type alias Game =
     { bird : Bird
@@ -14,7 +14,7 @@ type alias Game =
     , score : Int
     , player : Player
     , showDialog : Bool
-    , phxSocket : Phoenix.Socket.Socket Msg.Msg
+    , phxSocket : Phoenix.Socket.Socket Msg
     }
 
 
@@ -52,17 +52,9 @@ initialBird =
     , vy = 0
     }
 
+socketServer : String
+socketServer = "ws://localhost:4000/socket/websocket"
+
 ( gameWidth, gameHeight ) =
     ( 600, 400 )
 
-initialGame : Game
-initialGame =
-    { bird = initialBird
-    , pipes = []
-    , windowDimensions = ( gameWidth, gameHeight )
-    , state = Start
-    , score = 0
-    , player = Anonymous
-    , showDialog = True
-    , phxSocket = Phoenix.Socket.init "ws://localhost:4000/socket/websocket"
-    }
