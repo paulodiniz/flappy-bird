@@ -20,31 +20,47 @@ var _user$project$View$pipeToForms = function (pipe) {
 	};
 };
 var _user$project$View$blueSky = A3(_elm_lang$core$Color$rgb, 174, 238, 238);
-var _user$project$View$playersList = function (players) {
-	return A2(
-		_elm_lang$html$Html$ul,
-		{ctor: '[]'},
-		A2(
-			_elm_lang$core$List$map,
-			function (p) {
-				return A2(
-					_elm_lang$html$Html$li,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								p.name,
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									' - ',
-									_elm_lang$core$Basics$toString(p.score)))),
-						_1: {ctor: '[]'}
-					});
-			},
-			players));
-};
+var _user$project$View$displayPlayer = F2(
+	function (gameName, player) {
+		var message = function () {
+			var _p1 = gameName;
+			if (_p1.ctor === 'Nothing') {
+				return '';
+			} else {
+				return _elm_lang$core$Native_Utils.eq(_p1._0, player.name) ? '!! That\'s you!' : '';
+			}
+		}();
+		return _elm_lang$html$Html$text(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				player.name,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					' - ',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(player.score),
+						message))));
+	});
+var _user$project$View$playersList = F2(
+	function (name, players) {
+		return A2(
+			_elm_lang$html$Html$ul,
+			{ctor: '[]'},
+			A2(
+				_elm_lang$core$List$map,
+				function (p) {
+					return A2(
+						_elm_lang$html$Html$li,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: A2(_user$project$View$displayPlayer, name, p),
+							_1: {ctor: '[]'}
+						});
+				},
+				players));
+	});
 var _user$project$View$view = function (game) {
 	var scoreForm = A2(
 		_evancz$elm_graphics$Collage$move,
@@ -91,9 +107,9 @@ var _user$project$View$view = function (game) {
 			_elm_lang$core$List$append,
 			birdForm,
 			A2(_elm_lang$core$List$append, pipesForms, textForms)));
-	var _p1 = game.windowDimensions;
-	var w = _p1._0;
-	var h = _p1._1;
+	var _p2 = game.windowDimensions;
+	var w = _p2._0;
+	var h = _p2._1;
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
@@ -108,7 +124,7 @@ var _user$project$View$view = function (game) {
 					A3(_evancz$elm_graphics$Collage$collage, _user$project$Model$gameWidth, _user$project$Model$gameHeight, formList))),
 			_1: {
 				ctor: '::',
-				_0: _user$project$View$playersList(game.topPlayers),
+				_0: A2(_user$project$View$playersList, game.name, game.topPlayers),
 				_1: {ctor: '[]'}
 			}
 		});

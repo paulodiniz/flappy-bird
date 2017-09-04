@@ -58,14 +58,29 @@ view game =
             [ toHtml <|
                 container w h middle <|
                     collage gameWidth gameHeight formList
-            , playersList(game.topPlayers)
+            , playersList game.name game.topPlayers
             ]
 
 
-playersList : List TopPlayer -> Html msg
-playersList players =
-    Html.ul [] (List.map (\p -> Html.li [] [ Html.text (p.name ++ " - " ++ toString(p.score)) ]) players)
+playersList : Maybe String -> List TopPlayer -> Html msg
+playersList name players =
+    Html.ul [] (List.map (\p -> Html.li [] [ displayPlayer name p]) players)
 
+
+displayPlayer : Maybe String -> TopPlayer -> Html msg
+displayPlayer gameName player =
+
+    let
+        message = case gameName of
+                Nothing ->
+                    ""
+                Just val ->
+                    if val == player.name then
+                        "!! That's you!"
+                    else
+                        ""
+    in
+        Html.text(player.name ++ " - " ++ toString(player.score) ++ message)
 
 blueSky : Color
 blueSky =
