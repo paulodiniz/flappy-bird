@@ -167,24 +167,37 @@ var _user$project$Update$topPlayerDecoder = function (raw) {
 var _user$project$Update$decodeTopPlayers = function (raw) {
 	return A2(
 		_elm_lang$core$Json_Decode$decodeValue,
-		A4(
-			_elm_lang$core$Json_Decode$map3,
-			F3(
-				function (v0, v1, v2) {
-					return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
+		A7(
+			_elm_lang$core$Json_Decode$map6,
+			F6(
+				function (v0, v1, v2, v3, v4, v5) {
+					return {ctor: '_Tuple6', _0: v0, _1: v1, _2: v2, _3: v3, _4: v4, _5: v5};
 				}),
 			A2(_elm_lang$core$Json_Decode$field, 'name_0', _elm_lang$core$Json_Decode$string),
-			A2(_elm_lang$core$Json_Decode$field, 'uid_0', _elm_lang$core$Json_Decode$string),
-			A2(_elm_lang$core$Json_Decode$field, 'score_0', _elm_lang$core$Json_Decode$int)),
+			A2(_elm_lang$core$Json_Decode$field, 'score_0', _elm_lang$core$Json_Decode$int),
+			A2(_elm_lang$core$Json_Decode$field, 'name_1', _elm_lang$core$Json_Decode$string),
+			A2(_elm_lang$core$Json_Decode$field, 'score_1', _elm_lang$core$Json_Decode$int),
+			A2(_elm_lang$core$Json_Decode$field, 'name_2', _elm_lang$core$Json_Decode$string),
+			A2(_elm_lang$core$Json_Decode$field, 'score_2', _elm_lang$core$Json_Decode$int)),
 		raw);
 };
-var _user$project$Update$updatedTopPlayers = F3(
-	function (name, uid, score) {
-		var newPlayer = {score: score, name: name, uid: uid};
+var _user$project$Update$updatedTopPlayers = F6(
+	function (name_0, score_0, name_1, score_1, name_2, score_2) {
+		var third = {name: name_2, score: score_2};
+		var second = {name: name_1, score: score_1};
+		var first = {name: name_0, score: score_0};
 		return {
 			ctor: '::',
-			_0: newPlayer,
-			_1: {ctor: '[]'}
+			_0: first,
+			_1: {
+				ctor: '::',
+				_0: second,
+				_1: {
+					ctor: '::',
+					_0: third,
+					_1: {ctor: '[]'}
+				}
+			}
 		};
 	});
 var _user$project$Update$update = F2(
@@ -297,14 +310,16 @@ var _user$project$Update$update = F2(
 								return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
 							}
 						default:
-							var _p8 = _user$project$Update$decodeTopPlayers(_p2._0);
-							if (_p8.ctor === 'Ok') {
+							var _p10 = _p2._0;
+							var _p8 = A2(_elm_lang$core$Debug$log, 'RAW HERE', _p10);
+							var _p9 = _user$project$Update$decodeTopPlayers(_p10);
+							if (_p9.ctor === 'Ok') {
 								return {
 									ctor: '_Tuple2',
 									_0: _elm_lang$core$Native_Utils.update(
 										game,
 										{
-											topPlayers: A3(_user$project$Update$updatedTopPlayers, _p8._0._0, _p8._0._1, _p8._0._2)
+											topPlayers: A6(_user$project$Update$updatedTopPlayers, _p9._0._0, _p9._0._1, _p9._0._2, _p9._0._3, _p9._0._4, _p9._0._5)
 										}),
 									_1: _elm_lang$core$Platform_Cmd$none
 								};
@@ -313,8 +328,8 @@ var _user$project$Update$update = F2(
 							}
 					}
 				case 'Start':
-					var _p9 = msg;
-					if (_p9.ctor === 'KeyDown') {
+					var _p11 = msg;
+					if (_p11.ctor === 'KeyDown') {
 						var _v6 = _user$project$Msg$JoinGame,
 							_v7 = _elm_lang$core$Native_Utils.update(
 							game,

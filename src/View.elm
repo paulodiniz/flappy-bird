@@ -58,7 +58,7 @@ view game =
             [ toHtml <|
                 container w h middle <|
                     collage gameWidth gameHeight formList
-            , playersList <| game.topPlayers
+            , playersList(game.topPlayers)
             ]
 
 

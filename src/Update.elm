@@ -10,6 +10,7 @@ import Phoenix.Push
 import Random
 import Json.Decode as JD
 import Json.Encode as JE
+import Debug
 
 
 update : Msg -> Game -> ( Game, Cmd Msg )
@@ -80,11 +81,14 @@ update msg game =
                             ( game, Cmd.none )
 
                 UpdateTopPlayers raw ->
-                    case (decodeTopPlayers raw) of
-                        Ok(name, uid, score) ->
-                            ({ game | topPlayers = (updatedTopPlayers name uid score) }, Cmd.none)
-                        Err _ ->
-                            (game, Cmd.none)
+                    let
+                        _ = Debug.log "RAW HERE" raw
+                    in
+                      case (decodeTopPlayers raw) of
+                          Ok(name_0, score_0, name_1, score_1, name_2, score_2) ->
+                              ({ game | topPlayers = (updatedTopPlayers name_0 score_0 name_1 score_1 name_2 score_2)}, Cmd.none)
+                          Err _ ->
+                              (game, Cmd.none)
 
         Start ->
             case msg of
@@ -98,19 +102,25 @@ update msg game =
             ( game, Cmd.none )
 
 
-updatedTopPlayers : String -> String -> Int -> List TopPlayer
-updatedTopPlayers name uid score =
+updatedTopPlayers : String -> Int -> String -> Int -> String -> Int -> List TopPlayer
+updatedTopPlayers name_0 score_0 name_1 score_1 name_2 score_2 =
     let
-        newPlayer = { score= score, name= name, uid = uid }
+        first =  { name = name_0, score = score_0 }
+        second = { name = name_1, score = score_1 }
+        third =  { name = name_2, score = score_2 }
     in
-        [newPlayer]
+        [first, second, third]
 
-decodeTopPlayers : JD.Value -> Result String (String, String, Int)
+decodeTopPlayers : JD.Value -> Result String (String, Int, String, Int, String, Int)
 decodeTopPlayers raw =
     JD.decodeValue
-        (JD.map3 (,,)
+        (JD.map6 (,,,,,)
              (JD.field "name_0" JD.string)
              (JD.field "score_0" JD.int)
+             (JD.field "name_1" JD.string)
+             (JD.field "score_1" JD.int)
+             (JD.field "name_2" JD.string)
+             (JD.field "score_2" JD.int)
         ) raw
 
 

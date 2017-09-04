@@ -21,7 +21,6 @@ type alias Game =
 type alias TopPlayer =
     { name : String
     , score : Int
-    , uid : String
     }
 
 
