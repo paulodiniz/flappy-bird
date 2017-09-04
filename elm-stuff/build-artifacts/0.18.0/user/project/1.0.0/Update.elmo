@@ -137,17 +137,56 @@ var _user$project$Update$scorePayload = function (game) {
 			}
 		});
 };
-var _user$project$Update$joiningDecoder = A3(
-	_elm_lang$core$Json_Decode$map2,
-	F2(
-		function (v0, v1) {
-			return {ctor: '_Tuple2', _0: v0, _1: v1};
-		}),
-	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'uid', _elm_lang$core$Json_Decode$string));
 var _user$project$Update$decodeJoiningGame = function (raw) {
-	return A2(_elm_lang$core$Json_Decode$decodeValue, _user$project$Update$joiningDecoder, raw);
+	return A2(
+		_elm_lang$core$Json_Decode$decodeValue,
+		A3(
+			_elm_lang$core$Json_Decode$map2,
+			F2(
+				function (v0, v1) {
+					return {ctor: '_Tuple2', _0: v0, _1: v1};
+				}),
+			A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+			A2(_elm_lang$core$Json_Decode$field, 'uid', _elm_lang$core$Json_Decode$string)),
+		raw);
 };
+var _user$project$Update$topPlayerDecoder = function (raw) {
+	return A2(
+		_elm_lang$core$Json_Decode$decodeValue,
+		A4(
+			_elm_lang$core$Json_Decode$map3,
+			F3(
+				function (v0, v1, v2) {
+					return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
+				}),
+			A2(_elm_lang$core$Json_Decode$field, 'uid', _elm_lang$core$Json_Decode$string),
+			A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+			A2(_elm_lang$core$Json_Decode$field, 'score', _elm_lang$core$Json_Decode$int)),
+		raw);
+};
+var _user$project$Update$decodeTopPlayers = function (raw) {
+	return A2(
+		_elm_lang$core$Json_Decode$decodeValue,
+		A4(
+			_elm_lang$core$Json_Decode$map3,
+			F3(
+				function (v0, v1, v2) {
+					return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
+				}),
+			A2(_elm_lang$core$Json_Decode$field, 'name_0', _elm_lang$core$Json_Decode$string),
+			A2(_elm_lang$core$Json_Decode$field, 'uid_0', _elm_lang$core$Json_Decode$string),
+			A2(_elm_lang$core$Json_Decode$field, 'score_0', _elm_lang$core$Json_Decode$int)),
+		raw);
+};
+var _user$project$Update$updatedTopPlayers = F3(
+	function (name, uid, score) {
+		var newPlayer = {score: score, name: name, uid: uid};
+		return {
+			ctor: '::',
+			_0: newPlayer,
+			_1: {ctor: '[]'}
+		};
+	});
 var _user$project$Update$update = F2(
 	function (msg, game) {
 		update:
@@ -258,18 +297,30 @@ var _user$project$Update$update = F2(
 								return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
 							}
 						default:
-							var _p8 = A2(_elm_lang$core$Debug$log, 'Update top players', _p2._0);
-							return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+							var _p8 = _user$project$Update$decodeTopPlayers(_p2._0);
+							if (_p8.ctor === 'Ok') {
+								return {
+									ctor: '_Tuple2',
+									_0: _elm_lang$core$Native_Utils.update(
+										game,
+										{
+											topPlayers: A3(_user$project$Update$updatedTopPlayers, _p8._0._0, _p8._0._1, _p8._0._2)
+										}),
+									_1: _elm_lang$core$Platform_Cmd$none
+								};
+							} else {
+								return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+							}
 					}
 				case 'Start':
 					var _p9 = msg;
 					if (_p9.ctor === 'KeyDown') {
-						var _v5 = _user$project$Msg$JoinGame,
-							_v6 = _elm_lang$core$Native_Utils.update(
+						var _v6 = _user$project$Msg$JoinGame,
+							_v7 = _elm_lang$core$Native_Utils.update(
 							game,
 							{state: _user$project$Model$Play});
-						msg = _v5;
-						game = _v6;
+						msg = _v6;
+						game = _v7;
 						continue update;
 					} else {
 						return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};

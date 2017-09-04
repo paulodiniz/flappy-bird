@@ -50,7 +50,8 @@ var _user$project$Main$init = function () {
 		player: _user$project$Model$Anonymous,
 		phxSocket: initSocket,
 		name: _elm_lang$core$Maybe$Nothing,
-		uid: _elm_lang$core$Maybe$Nothing
+		uid: _elm_lang$core$Maybe$Nothing,
+		topPlayers: {ctor: '[]'}
 	};
 	return {
 		ctor: '_Tuple2',

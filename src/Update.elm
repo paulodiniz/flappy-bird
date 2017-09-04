@@ -2,14 +2,15 @@ module Update exposing (..)
 
 -- import Keyboard exposing (KeyCode)
 -- import Time exposing (..)
+
 import Model exposing (..)
 import Msg exposing (..)
 import Phoenix.Socket
 import Phoenix.Push
 import Random
-import Debug
 import Json.Decode as JD
 import Json.Encode as JE
+
 
 update : Msg -> Game -> ( Game, Cmd Msg )
 update msg game =
@@ -21,18 +22,23 @@ update msg game =
                         phxPush =
                             Phoenix.Push.init "top_players" "game:lobby"
                                 |> Phoenix.Push.withPayload (scorePayload game)
-                        (phxSocket, phxCmd) = Phoenix.Socket.push phxPush game.phxSocket
+
+                        ( phxSocket, phxCmd ) =
+                            Phoenix.Socket.push phxPush game.phxSocket
                     in
-                        ({game | phxSocket = phxSocket}, Cmd.map PhoenixMsg phxCmd)
+                        ( { game | phxSocket = phxSocket }, Cmd.map PhoenixMsg phxCmd )
 
                 SendScore ->
                     let
                         phxPush =
                             Phoenix.Push.init "update_score" "game:lobby"
                                 |> Phoenix.Push.withPayload (scorePayload game)
-                        (phxSocket, phxCmd) = Phoenix.Socket.push phxPush game.phxSocket
+
+                        ( phxSocket, phxCmd ) =
+                            Phoenix.Socket.push phxPush game.phxSocket
                     in
-                        ({game | phxSocket = phxSocket}, Cmd.map PhoenixMsg phxCmd)
+                        ( { game | phxSocket = phxSocket }, Cmd.map PhoenixMsg phxCmd )
+
                 TimeUpdate dt ->
                     updateFlappy game
 
@@ -50,33 +56,41 @@ update msg game =
                         phxPush =
                             Phoenix.Push.init "join_game" "game:lobby"
                                 |> Phoenix.Push.withPayload (JE.object [])
-                        (phxSocket, phxCmd) = Phoenix.Socket.push phxPush game.phxSocket
+
+                        ( phxSocket, phxCmd ) =
+                            Phoenix.Socket.push phxPush game.phxSocket
                     in
-                        ({game | phxSocket = phxSocket}, Cmd.map PhoenixMsg phxCmd)
+                        ( { game | phxSocket = phxSocket }, Cmd.map PhoenixMsg phxCmd )
 
                 PhoenixMsg msg ->
                     let
-                        ( phxSocket, phxCmd ) = Phoenix.Socket.update msg game.phxSocket
+                        ( phxSocket, phxCmd ) =
+                            Phoenix.Socket.update msg game.phxSocket
                     in
                         ( { game | phxSocket = phxSocket }
                         , Cmd.map PhoenixMsg phxCmd
                         )
+
                 JoinedGame raw ->
                     case (decodeJoiningGame raw) of
-                        Ok (name, uid) ->
-                            ({game | name = Just name, uid = Just uid}, Cmd.none)
+                        Ok ( name, uid ) ->
+                            ( { game | name = Just name, uid = Just uid }, Cmd.none )
+
                         Err error ->
-                            (game, Cmd.none)
+                            ( game, Cmd.none )
+
                 UpdateTopPlayers raw ->
-                    let
-                        _ = Debug.log "Update top players" raw
-                    in
-                      (game, Cmd.none)
+                    case (decodeTopPlayers raw) of
+                        Ok(name, uid, score) ->
+                            ({ game | topPlayers = (updatedTopPlayers name uid score) }, Cmd.none)
+                        Err _ ->
+                            (game, Cmd.none)
 
         Start ->
             case msg of
                 KeyDown keyCode ->
-                    { game | state = Play} |> update JoinGame
+                    { game | state = Play } |> update JoinGame
+
                 _ ->
                     ( game, Cmd.none )
 
@@ -84,26 +98,55 @@ update msg game =
             ( game, Cmd.none )
 
 
+updatedTopPlayers : String -> String -> Int -> List TopPlayer
+updatedTopPlayers name uid score =
+    let
+        newPlayer = { score= score, name= name, uid = uid }
+    in
+        [newPlayer]
+
+decodeTopPlayers : JD.Value -> Result String (String, String, Int)
+decodeTopPlayers raw =
+    JD.decodeValue
+        (JD.map3 (,,)
+             (JD.field "name_0" JD.string)
+             (JD.field "score_0" JD.int)
+        ) raw
+
+
+topPlayerDecoder : JD.Value -> Result String ( String, String, Int )
+topPlayerDecoder raw =
+    JD.decodeValue
+        (JD.map3 (,,)
+            (JD.field "uid" JD.string)
+            (JD.field "name" JD.string)
+            (JD.field "score" JD.int)
+        )
+        raw
+
+
 decodeJoiningGame : JD.Value -> Result String ( String, String )
 decodeJoiningGame raw =
-    JD.decodeValue joiningDecoder raw
+    JD.decodeValue
+        (JD.map2 (,)
+            (JD.field "name" JD.string)
+            (JD.field "uid" JD.string)
+        )
+        raw
 
-joiningDecoder : JD.Decoder (String, String)
-joiningDecoder =
-    JD.map2 (,)
-          (JD.field "name" JD.string)
-          (JD.field "uid" JD.string)
 
 scorePayload : Game -> JE.Value
 scorePayload game =
     let
-        uid = case game.uid of
-                  Nothing ->
-                      ""
-                  Just val ->
-                      val
+        uid =
+            case game.uid of
+                Nothing ->
+                    ""
+
+                Just val ->
+                    val
     in
-      JE.object [("uid", JE.string uid), ("score", JE.int game.score )]
+        JE.object [ ( "uid", JE.string uid ), ( "score", JE.int game.score ) ]
 
 
 generateNewPipe : Game -> Float -> Game
@@ -136,7 +179,7 @@ generateNewPipe game height =
         { game | pipes = List.append game.pipes [ upPipe, downPipe ] }
 
 
-updateFlappy : Game -> (Game, Cmd Msg)
+updateFlappy : Game -> ( Game, Cmd Msg )
 updateFlappy game =
     game
         |> gravity
@@ -147,7 +190,7 @@ updateFlappy game =
         |> updateScore
 
 
-updateScore : Game -> (Game, Cmd Msg)
+updateScore : Game -> ( Game, Cmd Msg )
 updateScore game =
     let
         score =
@@ -156,7 +199,7 @@ updateScore game =
                 |> (\x -> x // 2)
     in
         if (game.score == score) then
-            (game, Cmd.none)
+            ( game, Cmd.none )
         else
             { game | score = score } |> update SendScore
 

@@ -11,8 +11,6 @@ import Collage exposing (..)
 import Color exposing (..)
 import Model exposing (..)
 import Text
-import Dialog
-import Msg exposing (..)
 
 
 view : Game -> Html msg
@@ -60,13 +58,13 @@ view game =
             [ toHtml <|
                 container w h middle <|
                     collage gameWidth gameHeight formList
-            , playersList
+            , playersList <| game.topPlayers
             ]
 
 
-playersList : Html msg
-playersList =
-    Html.ul [] (List.map (\s -> Html.li [] [ Html.text s ]) [ "My", "players", "List" ])
+playersList : List TopPlayer -> Html msg
+playersList players =
+    Html.ul [] (List.map (\p -> Html.li [] [ Html.text (p.name ++ " - " ++ toString(p.score)) ]) players)
 
 
 blueSky : Color

@@ -42,6 +42,7 @@ init =
             , phxSocket = initSocket
             , name = Nothing
             , uid = Nothing
+            , topPlayers = []
             }
     in
       ( initialGame , Cmd.map PhoenixMsg phxCmd )

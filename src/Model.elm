@@ -1,9 +1,8 @@
 module Model exposing (..)
 
 import Phoenix.Socket
-import Phoenix.Channel
-import Phoenix.Push
 import Msg exposing (..)
+
 
 type alias Game =
     { bird : Bird
@@ -15,6 +14,14 @@ type alias Game =
     , phxSocket : Phoenix.Socket.Socket Msg
     , name : Maybe String
     , uid : Maybe String
+    , topPlayers : List TopPlayer
+    }
+
+
+type alias TopPlayer =
+    { name : String
+    , score : Int
+    , uid : String
     }
 
 
@@ -31,18 +38,26 @@ type alias Pipe =
     , width : Float
     , x : Float
     , y : Float
-    , direction: Direction
+    , direction : Direction
     , passed : Bool
     }
 
-type Direction = Up | Down
+
+type Direction
+    = Up
+    | Down
+
 
 type GameState
     = Play
     | Start
     | GameOver
 
-type Player = Anonymous | String
+
+type Player
+    = Anonymous
+    | String
+
 
 initialBird : Bird
 initialBird =
@@ -52,9 +67,11 @@ initialBird =
     , vy = 0
     }
 
+
 socketServer : String
-socketServer = "ws://localhost:4000/socket/websocket"
+socketServer =
+    "ws://localhost:4000/socket/websocket"
+
 
 ( gameWidth, gameHeight ) =
     ( 600, 400 )
-
