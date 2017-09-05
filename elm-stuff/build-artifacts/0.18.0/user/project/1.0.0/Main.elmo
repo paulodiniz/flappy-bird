@@ -2,18 +2,62 @@ var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$batch(
 		{
 			ctor: '::',
-			_0: _elm_lang$animation_frame$AnimationFrame$diffs(_user$project$Update$TimeUpdate),
+			_0: _elm_lang$animation_frame$AnimationFrame$diffs(_user$project$Msg$TimeUpdate),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$keyboard$Keyboard$downs(_user$project$Update$KeyDown),
+				_0: _elm_lang$keyboard$Keyboard$downs(_user$project$Msg$KeyDown),
 				_1: {
 					ctor: '::',
-					_0: A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second * 2, _user$project$Update$GeneratePipe),
-					_1: {ctor: '[]'}
+					_0: A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second * 2, _user$project$Msg$GeneratePipe),
+					_1: {
+						ctor: '::',
+						_0: A2(_fbonetti$elm_phoenix_socket$Phoenix_Socket$listen, model.phxSocket, _user$project$Msg$PhoenixMsg),
+						_1: {
+							ctor: '::',
+							_0: A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _user$project$Msg$AskForTopPlayers),
+							_1: {ctor: '[]'}
+						}
+					}
 				}
 			}
 		});
 };
-var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Model$initialGame, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$Main$init = function () {
+	var channel = _fbonetti$elm_phoenix_socket$Phoenix_Channel$init('game:lobby');
+	var _p0 = A2(
+		_fbonetti$elm_phoenix_socket$Phoenix_Socket$join,
+		channel,
+		A4(
+			_fbonetti$elm_phoenix_socket$Phoenix_Socket$on,
+			'top_players',
+			'game:lobby',
+			_user$project$Msg$UpdateTopPlayers,
+			A4(
+				_fbonetti$elm_phoenix_socket$Phoenix_Socket$on,
+				'joined_game',
+				'game:lobby',
+				_user$project$Msg$JoinedGame,
+				_fbonetti$elm_phoenix_socket$Phoenix_Socket$withDebug(
+					_fbonetti$elm_phoenix_socket$Phoenix_Socket$init(_user$project$Model$socketServer)))));
+	var initSocket = _p0._0;
+	var phxCmd = _p0._1;
+	var initialGame = {
+		bird: _user$project$Model$initialBird,
+		pipes: {ctor: '[]'},
+		windowDimensions: {ctor: '_Tuple2', _0: _user$project$Model$gameWidth, _1: _user$project$Model$gameHeight},
+		state: _user$project$Model$Start,
+		score: 0,
+		player: _user$project$Model$Anonymous,
+		phxSocket: initSocket,
+		name: _elm_lang$core$Maybe$Nothing,
+		uid: _elm_lang$core$Maybe$Nothing,
+		topPlayers: {ctor: '[]'}
+	};
+	return {
+		ctor: '_Tuple2',
+		_0: initialGame,
+		_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Msg$PhoenixMsg, phxCmd)
+	};
+}();
 var _user$project$Main$main = _elm_lang$html$Html$program(
 	{init: _user$project$Main$init, view: _user$project$View$view, update: _user$project$Update$update, subscriptions: _user$project$Main$subscriptions})();

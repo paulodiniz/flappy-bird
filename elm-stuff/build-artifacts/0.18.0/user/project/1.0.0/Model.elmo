@@ -1,10 +1,32 @@
 var _user$project$Model$_p0 = {ctor: '_Tuple2', _0: 600, _1: 400};
 var _user$project$Model$gameWidth = _user$project$Model$_p0._0;
 var _user$project$Model$gameHeight = _user$project$Model$_p0._1;
+var _user$project$Model$socketServer = 'ws://localhost:4000/socket/websocket';
 var _user$project$Model$initialBird = {x: -150, y: 20, vx: 2, vy: 0};
-var _user$project$Model$Game = F5(
-	function (a, b, c, d, e) {
-		return {bird: a, pipes: b, windowDimensions: c, state: d, score: e};
+var _user$project$Model$Game = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return {bird: a, pipes: b, windowDimensions: c, state: d, score: e, player: f, phxSocket: g, name: h, uid: i, topPlayers: j};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _user$project$Model$TopPlayer = F2(
+	function (a, b) {
+		return {name: a, score: b};
 	});
 var _user$project$Model$Bird = F4(
 	function (a, b, c, d) {
@@ -18,11 +40,6 @@ var _user$project$Model$Down = {ctor: 'Down'};
 var _user$project$Model$Up = {ctor: 'Up'};
 var _user$project$Model$GameOver = {ctor: 'GameOver'};
 var _user$project$Model$Start = {ctor: 'Start'};
-var _user$project$Model$initialGame = {
-	bird: _user$project$Model$initialBird,
-	pipes: {ctor: '[]'},
-	windowDimensions: {ctor: '_Tuple2', _0: _user$project$Model$gameWidth, _1: _user$project$Model$gameHeight},
-	state: _user$project$Model$Start,
-	score: 0
-};
 var _user$project$Model$Play = {ctor: 'Play'};
+var _user$project$Model$String = {ctor: 'String'};
+var _user$project$Model$Anonymous = {ctor: 'Anonymous'};

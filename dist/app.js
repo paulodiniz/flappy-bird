@@ -11985,17 +11985,17 @@ var _user$project$Model$_p0 = {ctor: '_Tuple2', _0: 600, _1: 400};
 var _user$project$Model$gameWidth = _user$project$Model$_p0._0;
 var _user$project$Model$gameHeight = _user$project$Model$_p0._1;
 var _user$project$Model$initialBird = {x: -150, y: 20, vx: 2, vy: 0};
-var _user$project$Model$Game = F4(
-	function (a, b, c, d) {
-		return {bird: a, pipes: b, windowDimensions: c, state: d};
+var _user$project$Model$Game = F5(
+	function (a, b, c, d, e) {
+		return {bird: a, pipes: b, windowDimensions: c, state: d, score: e};
 	});
 var _user$project$Model$Bird = F4(
 	function (a, b, c, d) {
 		return {x: a, y: b, vx: c, vy: d};
 	});
-var _user$project$Model$Pipe = F5(
-	function (a, b, c, d, e) {
-		return {height: a, width: b, x: c, y: d, direction: e};
+var _user$project$Model$Pipe = F6(
+	function (a, b, c, d, e, f) {
+		return {height: a, width: b, x: c, y: d, direction: e, passed: f};
 	});
 var _user$project$Model$Down = {ctor: 'Down'};
 var _user$project$Model$Up = {ctor: 'Up'};
@@ -12005,7 +12005,8 @@ var _user$project$Model$initialGame = {
 	bird: _user$project$Model$initialBird,
 	pipes: {ctor: '[]'},
 	windowDimensions: {ctor: '_Tuple2', _0: _user$project$Model$gameWidth, _1: _user$project$Model$gameHeight},
-	state: _user$project$Model$Start
+	state: _user$project$Model$Start,
+	score: 0
 };
 var _user$project$Model$Play = {ctor: 'Play'};
 
@@ -12032,6 +12033,24 @@ var _user$project$View$pipeToForms = function (pipe) {
 };
 var _user$project$View$blueSky = A3(_elm_lang$core$Color$rgb, 174, 238, 238);
 var _user$project$View$view = function (game) {
+	var scoreForm = A2(
+		_evancz$elm_graphics$Collage$move,
+		{ctor: '_Tuple2', _0: 0, _1: (_user$project$Model$gameHeight / 2) - 50},
+		_evancz$elm_graphics$Collage$text(
+			_evancz$elm_graphics$Text$bold(
+				A2(
+					_evancz$elm_graphics$Text$color,
+					A3(_elm_lang$core$Color$rgb, 50, 160, 50),
+					A2(
+						_evancz$elm_graphics$Text$height,
+						50,
+						_evancz$elm_graphics$Text$fromString(
+							_elm_lang$core$Basics$toString(game.score)))))));
+	var textForms = {
+		ctor: '::',
+		_0: scoreForm,
+		_1: {ctor: '[]'}
+	};
 	var backgroundForms = {
 		ctor: '::',
 		_0: A2(
@@ -12055,7 +12074,10 @@ var _user$project$View$view = function (game) {
 	var formList = A2(
 		_elm_lang$core$List$append,
 		backgroundForms,
-		A2(_elm_lang$core$List$append, birdForm, pipesForms));
+		A2(
+			_elm_lang$core$List$append,
+			birdForm,
+			A2(_elm_lang$core$List$append, pipesForms, textForms)));
 	var _p1 = game.windowDimensions;
 	var w = _p1._0;
 	var h = _p1._1;
@@ -12108,9 +12130,12 @@ var _user$project$Update$upperLimit = function (game) {
 };
 var _user$project$Update$updatePipe = F2(
 	function (bird, pipe) {
+		var birdWidth = 35;
+		var leftBird = (bird.x - (birdWidth / 2)) + 10;
+		var passed = (_elm_lang$core$Native_Utils.cmp(leftBird, pipe.x + pipe.width) > -1) ? true : false;
 		return _elm_lang$core$Native_Utils.update(
 			pipe,
-			{x: pipe.x - bird.vx});
+			{x: pipe.x - bird.vx, passed: passed});
 	});
 var _user$project$Update$updatePipes = function (game) {
 	var bird = game.bird;
@@ -12153,19 +12178,35 @@ var _user$project$Update$gravity = function (game) {
 		game,
 		{bird: newBird});
 };
+var _user$project$Update$updateScore = function (game) {
+	var score = function (x) {
+		return (x / 2) | 0;
+	}(
+		_elm_lang$core$List$length(
+			A2(
+				_elm_lang$core$List$filter,
+				function (pipe) {
+					return _elm_lang$core$Native_Utils.eq(pipe.passed, true);
+				},
+				game.pipes)));
+	return _elm_lang$core$Native_Utils.update(
+		game,
+		{score: score});
+};
 var _user$project$Update$updateFlappy = function (game) {
-	return _user$project$Update$checkPipeColision(
-		_user$project$Update$upperLimit(
-			_user$project$Update$updatePipes(
-				_user$project$Update$physics(
-					_user$project$Update$gravity(game)))));
+	return _user$project$Update$updateScore(
+		_user$project$Update$updatePipes(
+			_user$project$Update$checkPipeColision(
+				_user$project$Update$upperLimit(
+					_user$project$Update$physics(
+						_user$project$Update$gravity(game))))));
 };
 var _user$project$Update$generateNewPipe = F2(
 	function (game, height) {
 		var bottomHeight = height;
 		var upHeight = (400 - bottomHeight) + 200;
-		var upPipe = {height: upHeight, width: 75, x: 300, y: _user$project$Model$gameHeight / 2, direction: _user$project$Model$Up};
-		var downPipe = {height: bottomHeight, width: 75, x: 300, y: (0 - _user$project$Model$gameHeight) / 2, direction: _user$project$Model$Down};
+		var upPipe = {height: upHeight, width: 75, x: 300, y: _user$project$Model$gameHeight / 2, direction: _user$project$Model$Up, passed: false};
+		var downPipe = {height: bottomHeight, width: 75, x: 300, y: (0 - _user$project$Model$gameHeight) / 2, direction: _user$project$Model$Down, passed: false};
 		return _elm_lang$core$Native_Utils.update(
 			game,
 			{
@@ -12216,7 +12257,7 @@ var _user$project$Update$update = F2(
 							_1: A2(
 								_elm_lang$core$Random$generate,
 								_user$project$Update$NewPipe,
-								A2(_elm_lang$core$Random$float, 100, 300))
+								A2(_elm_lang$core$Random$float, 50, 400))
 						};
 					default:
 						return {

@@ -1,0 +1,61 @@
+var _krisajenkins$elm_exts$Exts_Result$either = F3(
+	function (f, g, r) {
+		var _p0 = r;
+		if (_p0.ctor === 'Err') {
+			return f(_p0._0);
+		} else {
+			return g(_p0._0);
+		}
+	});
+var _krisajenkins$elm_exts$Exts_Result$mappend = F2(
+	function (a, b) {
+		var _p1 = {ctor: '_Tuple2', _0: a, _1: b};
+		if (_p1._0.ctor === 'Err') {
+			return _elm_lang$core$Result$Err(_p1._0._0);
+		} else {
+			if (_p1._1.ctor === 'Err') {
+				return _elm_lang$core$Result$Err(_p1._1._0);
+			} else {
+				return _elm_lang$core$Result$Ok(
+					{ctor: '_Tuple2', _0: _p1._0._0, _1: _p1._1._0});
+			}
+		}
+	});
+var _krisajenkins$elm_exts$Exts_Result$fromErr = function (x) {
+	var _p2 = x;
+	if (_p2.ctor === 'Err') {
+		return _elm_lang$core$Maybe$Just(_p2._0);
+	} else {
+		return _elm_lang$core$Maybe$Nothing;
+	}
+};
+var _krisajenkins$elm_exts$Exts_Result$fromOk = function (x) {
+	var _p3 = x;
+	if (_p3.ctor === 'Ok') {
+		return _elm_lang$core$Maybe$Just(_p3._0);
+	} else {
+		return _elm_lang$core$Maybe$Nothing;
+	}
+};
+var _krisajenkins$elm_exts$Exts_Result$isOk = function (x) {
+	var _p4 = x;
+	if (_p4.ctor === 'Ok') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _krisajenkins$elm_exts$Exts_Result$isErr = function (_p5) {
+	return !_krisajenkins$elm_exts$Exts_Result$isOk(_p5);
+};
+var _krisajenkins$elm_exts$Exts_Result$mapBoth = F3(
+	function (f, g, r) {
+		var _p6 = r;
+		if (_p6.ctor === 'Ok') {
+			return _elm_lang$core$Result$Ok(
+				g(_p6._0));
+		} else {
+			return _elm_lang$core$Result$Err(
+				f(_p6._0));
+		}
+	});

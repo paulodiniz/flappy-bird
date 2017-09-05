@@ -1,6 +1,11 @@
 module View exposing (view)
 
 import Html exposing (Html)
+
+
+-- import Html.Attributes exposing (..)
+-- import Html.Events exposing (..)
+
 import Element exposing (..)
 import Collage exposing (..)
 import Color exposing (..)
@@ -34,11 +39,11 @@ view game =
 
         scoreForm =
             Text.fromString (toString game.score)
-            |> (Text.height 50)
-            |> Text.color (Color.rgb 50 160 50)
-            |> Text.bold
-            |> text
-            |> move(0, gameHeight/2 - 50)
+                |> (Text.height 50)
+                |> Text.color (Color.rgb 50 160 50)
+                |> Text.bold
+                |> text
+                |> move ( 0, gameHeight / 2 - 50 )
 
         textForms =
             [ scoreForm ]
@@ -49,10 +54,36 @@ view game =
                     List.append pipesForms <|
                         textForms
     in
-        toHtml <|
-            container w h middle <|
-                collage gameWidth gameHeight formList
+        Html.div []
+            [ toHtml <|
+                container w h middle <|
+                    collage gameWidth gameHeight formList
+            , playersList game.name game.topPlayers
+            ]
 
+
+playersList : Maybe String -> List TopPlayer -> Html msg
+playersList name players =
+    -- let
+        -- _ = Debug.log "LISTA DE PLAYERS" players
+    -- in
+        Html.ul [] (List.map (\p -> Html.li [] [ displayPlayer name p]) players)
+
+
+displayPlayer : Maybe String -> TopPlayer -> Html msg
+displayPlayer gameName player =
+
+    let
+        message = case gameName of
+                Nothing ->
+                    ""
+                Just val ->
+                    if val == player.name then
+                        "!! That's you!"
+                    else
+                        ""
+    in
+        Html.text(player.name ++ " - " ++ toString(player.score) ++ message)
 
 blueSky : Color
 blueSky =

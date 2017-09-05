@@ -1,0 +1,70 @@
+var _krisajenkins$elm_exts$Exts_Json_Decode$decodeEmptyObject = function ($default) {
+	return A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (aDict) {
+			return _elm_lang$core$Dict$isEmpty(aDict) ? _elm_lang$core$Json_Decode$succeed($default) : _elm_lang$core$Json_Decode$fail('Expected {}');
+		},
+		_elm_lang$core$Json_Decode$dict(_elm_lang$core$Json_Decode$value));
+};
+var _krisajenkins$elm_exts$Exts_Json_Decode$exactlyOne = function (decoder) {
+	return A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (results) {
+			var successes = A2(_elm_lang$core$List$filterMap, _elm_lang$core$Basics$identity, results);
+			var _p0 = successes;
+			if ((_p0.ctor === '::') && (_p0._1.ctor === '[]')) {
+				return _elm_lang$core$Json_Decode$succeed(_p0._0);
+			} else {
+				return _elm_lang$core$Json_Decode$fail(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'Expected exactly one matching element. Got: ',
+						_elm_lang$core$Basics$toString(
+							_elm_lang$core$List$length(successes))));
+			}
+		},
+		_elm_lang$core$Json_Decode$list(
+			_elm_lang$core$Json_Decode$maybe(decoder)));
+};
+var _krisajenkins$elm_exts$Exts_Json_Decode$set = function (_p1) {
+	return A2(
+		_elm_lang$core$Json_Decode$map,
+		_elm_lang$core$Set$fromList,
+		_elm_lang$core$Json_Decode$list(_p1));
+};
+var _krisajenkins$elm_exts$Exts_Json_Decode$customDecoder = F2(
+	function (decoder, parser) {
+		return A2(
+			_elm_lang$core$Json_Decode$andThen,
+			function (s) {
+				var _p2 = parser(s);
+				if (_p2.ctor === 'Err') {
+					return _elm_lang$core$Json_Decode$fail(_p2._0);
+				} else {
+					return _elm_lang$core$Json_Decode$succeed(_p2._0);
+				}
+			},
+			decoder);
+	});
+var _krisajenkins$elm_exts$Exts_Json_Decode$decodeDate = A2(_krisajenkins$elm_exts$Exts_Json_Decode$customDecoder, _elm_lang$core$Json_Decode$string, _elm_lang$core$Date$fromString);
+var _krisajenkins$elm_exts$Exts_Json_Decode$parseWith = F2(
+	function (f, input) {
+		var _p3 = f(input);
+		if (_p3.ctor === 'Err') {
+			return _elm_lang$core$Json_Decode$fail(_p3._0);
+		} else {
+			return _elm_lang$core$Json_Decode$succeed(_p3._0);
+		}
+	});
+var _krisajenkins$elm_exts$Exts_Json_Decode$decodeTime = A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Date$fromTime, _elm_lang$core$Json_Decode$float);
+var _krisajenkins$elm_exts$Exts_Json_Decode$parseEmptyOrString = function (string) {
+	return _elm_lang$core$String$isEmpty(
+		_elm_lang$core$String$trim(string)) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(string);
+};
+var _krisajenkins$elm_exts$Exts_Json_Decode$stringIgnoringBlanks = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	function (maybeString) {
+		return _elm_lang$core$Json_Decode$succeed(
+			A2(_elm_lang$core$Maybe$andThen, _krisajenkins$elm_exts$Exts_Json_Decode$parseEmptyOrString, maybeString));
+	},
+	_elm_lang$core$Json_Decode$maybe(_elm_lang$core$Json_Decode$string));
