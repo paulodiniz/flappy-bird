@@ -64,7 +64,10 @@ view game =
 
 playersList : Maybe String -> List TopPlayer -> Html msg
 playersList name players =
-    Html.ul [] (List.map (\p -> Html.li [] [ displayPlayer name p]) players)
+    -- let
+        -- _ = Debug.log "LISTA DE PLAYERS" players
+    -- in
+        Html.ul [] (List.map (\p -> Html.li [] [ displayPlayer name p]) players)
 
 
 displayPlayer : Maybe String -> TopPlayer -> Html msg

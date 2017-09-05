@@ -83,6 +83,8 @@ update msg game =
                 UpdateTopPlayers raw ->
                     let
                         _ = Debug.log "RAW HERE" raw
+                        result = decodeTopPlayers raw
+                        _ = Debug.log "After decoding" result
                     in
                       case (decodeTopPlayers raw) of
                           Ok(name_0, score_0, name_1, score_1, name_2, score_2) ->
@@ -102,25 +104,56 @@ update msg game =
             ( game, Cmd.none )
 
 
-updatedTopPlayers : String -> Int -> String -> Int -> String -> Int -> List TopPlayer
+updatedTopPlayers : Maybe String -> Maybe Int -> Maybe String -> Maybe Int -> Maybe String -> Maybe Int -> List TopPlayer
 updatedTopPlayers name_0 score_0 name_1 score_1 name_2 score_2 =
     let
-        first =  { name = name_0, score = score_0 }
-        second = { name = name_1, score = score_1 }
-        third =  { name = name_2, score = score_2 }
+        name_0_ = case name_0 of
+                      Nothing ->
+                          ""
+                      Just val ->
+                          val
+        score_0_ = case score_0 of
+                      Nothing ->
+                          0
+                      Just val ->
+                          val
+        name_1_ = case name_1 of
+                      Nothing ->
+                          ""
+                      Just val ->
+                          val
+        score_1_ = case score_1 of
+                      Nothing ->
+                          0
+                      Just val ->
+                          val
+        name_2_ = case name_2 of
+                      Nothing ->
+                          ""
+                      Just val ->
+                          val
+        score_2_ = case score_2 of
+                      Nothing ->
+                          0
+                      Just val ->
+                          val
+
+        first =  { name = name_0_, score = score_0_ }
+        second = { name = name_1_, score = score_1_ }
+        third =  { name = name_2_, score = score_2_ }
     in
         [first, second, third]
 
-decodeTopPlayers : JD.Value -> Result String (String, Int, String, Int, String, Int)
+decodeTopPlayers : JD.Value -> Result String (Maybe String, Maybe Int, Maybe String, Maybe Int, Maybe String, Maybe Int)
 decodeTopPlayers raw =
     JD.decodeValue
         (JD.map6 (,,,,,)
-             (JD.field "name_0" JD.string)
-             (JD.field "score_0" JD.int)
-             (JD.field "name_1" JD.string)
-             (JD.field "score_1" JD.int)
-             (JD.field "name_2" JD.string)
-             (JD.field "score_2" JD.int)
+             (JD.maybe (JD.field "name_0" JD.string))
+             (JD.maybe (JD.field "score_0" JD.int))
+             (JD.maybe (JD.field "name_1" JD.string))
+             (JD.maybe (JD.field "score_1" JD.int))
+             (JD.maybe (JD.field "name_2" JD.string))
+             (JD.maybe (JD.field "score_2" JD.int))
         ) raw
 
 
