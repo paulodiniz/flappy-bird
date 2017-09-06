@@ -69,7 +69,7 @@ initialBird =
 
 socketServer : String
 socketServer =
-    "ws://limitless-tor-81039.herokuapp.com/socket/websocket"
+    "wss://limitless-tor-81039.herokuapp.com/socket/websocket"
 
 
 ( gameWidth, gameHeight ) =
