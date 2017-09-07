@@ -101,7 +101,11 @@ update msg game =
                     ( game, Cmd.none )
 
         GameOver ->
-            ( game, Cmd.none )
+            case msg of
+                KeyDown keyCode ->
+                    ({ game | state = Play, pipes = [], bird = initialBird }, Cmd.none)
+                _ ->
+                    ( game, Cmd.none )
 
 
 updatedTopPlayers : Maybe String -> Maybe Int -> Maybe String -> Maybe Int -> Maybe String -> Maybe Int -> List TopPlayer
