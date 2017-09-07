@@ -102,8 +102,8 @@ update msg game =
 
         GameOver ->
             case msg of
-                KeyDown keyCode ->
-                    ({ game | state = Play, pipes = [], bird = initialBird }, Cmd.none)
+                -- KeyDown keyCode ->
+                --     ({ game | state = Play, pipes = [], bird = initialBird }, Cmd.none)
                 _ ->
                     ( game, Cmd.none )
 
