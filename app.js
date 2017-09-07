@@ -13824,7 +13824,22 @@ var _user$project$Update$update = F2(
 						return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
 					}
 				default:
-					return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+					var _p19 = msg;
+					if (_p19.ctor === 'KeyDown') {
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								game,
+								{
+									state: _user$project$Model$Play,
+									pipes: {ctor: '[]'},
+									bird: _user$project$Model$initialBird
+								}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					} else {
+						return {ctor: '_Tuple2', _0: game, _1: _elm_lang$core$Platform_Cmd$none};
+					}
 			}
 		}
 	});
